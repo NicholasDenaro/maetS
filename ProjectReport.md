@@ -1,18 +1,18 @@
 ***
 #<p align="center"> Project Report </p>
-[comment]: <> (Title Page)
+[](Title Page)
 ***
-[comment]: <> (Table of Contents)
+[](Table of Contents)
 ***
-[comment]: <> (List of Figures)
+[](List of Figures)
 ***
-[comment]: <> (List of Tables)
+[](List of Tables)
 ***
-[comment]: <> (Intro - labeled with 1)
+[](Intro - labeled with 1)
 ##<p align="center"> 1. Introduction </p>
 ***
-[comment]: <> (How we plan to use the functions)
+[](How we plan to use the functions)
 ##<p align="center"> 2. Function Definitions </p>
 ***
-[comment]: <> (Conclusion)
+[](Conclusion)
 ##<p align="center"> 1. Conclusion </p>
