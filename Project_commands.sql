@@ -36,4 +36,28 @@ CREATE TABLE Sale_Item (
     FOREIGN KEY (iid) REFERENCES Item.iid
 );
 
-CREATE TABLE 
+CREATE TABLE Category (
+    cname char(20),
+    cid char(30),
+    PRIMARY KEY (cid)
+);
+
+CREATE TABLE Categorized (
+    
+);
+
+CREATE TABLE Connected_To (
+    
+);
+
+CREATE TABLE Loc_Addresses (
+    aid char(30),
+    street char(25),
+    city char(20),
+    astate char(15),
+    zip REAL,
+    apt_number REAL,
+    PRIMARY KEY (aid, username)
+    FOREIGN KEY (username) REFERENCES Usr
+            ON DELETE CASCADE);
+);
