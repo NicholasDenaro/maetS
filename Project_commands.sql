@@ -61,7 +61,8 @@ CREATE TABLE Categorized (
 CREATE TABLE Connected_To (
     cid char(30) NOT NULL,
     mcid char(30) NOT NULL,
-    FOREIGN KEY (mcid) REFERENCES Category (iid),
+    PRIMARY KEY (cid, mcid),
+    FOREIGN KEY (mcid) REFERENCES Category(cid),
     FOREIGN KEY (cid) REFERENCES Category(cid)
 )ENGINE=INNODB;
 
