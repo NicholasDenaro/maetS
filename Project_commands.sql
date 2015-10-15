@@ -15,6 +15,7 @@ CREATE TABLE User_Transaction (
     cusername char(20) NOT NULL,
     busername char(20) NOT NULL,
     PRIMARY KEY (tid, cusername, busername),
+    FOREIGN KEY (iid) REFERENCES Item(iid),
     FOREIGN KEY (cusername) REFERENCES Usr(username),
     FOREIGN Key (busername) REFERENCES Usr(username)
 )ENGINE=INNODB;
