@@ -11,7 +11,7 @@ if(isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === 'GET')
 	else
 	{
 		$_keyword=($_GET['keyword']);
-		getItemByKeyword($_keyword);
+		getItemsByKeyword($_keyword);
 	}
 }
 
