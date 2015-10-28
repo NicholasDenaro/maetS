@@ -167,7 +167,7 @@ function getSaleItem( $itemId )
 function getItemsByKeyword( $keyword )
 {
 	//query creation
-	$search_keyQuery = "SELECT * FROM Search_Key S WHERE S.kid LIKE '".$keyword"'";
+	$search_keyQuery = "SELECT * FROM Search_Key S WHERE S.kid LIKE '".$keyword."'";
 
 	//query database
 	$databaseConnection = GetDatabaseConnection();
@@ -219,7 +219,7 @@ function getSupplier( $supplierName )
 	$supplierQuery = "SELECT * FROM Supplier_Stocked S WHERE S.username LIKE '".$supplierName."'";
 
 	//query database
-	$databaseConnection = GetDatabaseConection();
+	$databaseConnection = GetDatabaseConnection();
 	$supplierResult = $databaseConnection->query($supplierQuery);
 
 	//If no results then stop
@@ -348,7 +348,7 @@ function getSoldByUser( $userName )
 
 	//query database
 	$databaseConnection = GetDatabaseConnection();
-	$user_tranResult = $databaseConnection->query($user_tyransQuery);
+	$user_tranResult = $databaseConnection->query($user_transQuery);
 
 	//If no results then stop
 	if($user_tranResult == false){
