@@ -34,14 +34,16 @@ CREATE TABLE Auction_Item (
     bidder char(20) NOT NULL,
     min_price REAL,
     PRIMARY KEY (iid),
-    FOREIGN KEY (iid) REFERENCES Item(iid)
+    FOREIGN KEY (iid) REFERENCES Item(iid) 
+        ON DELETE CASCADE
 )ENGINE=INNODB;
 
 CREATE TABLE Sale_Item (
     iid char(20) NOT NULL,
     price REAL,
     PRIMARY KEY (iid),
-    FOREIGN KEY (iid) REFERENCES Item(iid)
+    FOREIGN KEY (iid) REFERENCES Item(iid) 
+        ON DELETE CASCADE
 )ENGINE=INNODB;
 
 CREATE TABLE Category (
@@ -144,7 +146,7 @@ CREATE TABLE Stocked_By (
             ON DELETE CASCADE
 ) ENGINE=INNODB;
 
-CREATE TABLE Whishes_For (
+CREATE TABLE Wishes_For (
     wid char(30) NOT NULL,
     username char(20) NOT NULL,
     PRIMARY KEY (wid, username),
@@ -186,12 +188,6 @@ VALUES
 ('Christopher', 'Train!Hard3R', 130000, 'M', 12/05/90, 'ChromeNight89', 'chris@chris.com'),
 ('Jessica', 'Discover1t', 34000, 'F', 10/28/96, 'Jessintime', 'jessica@jess.net');
 
-
-utdate date,
-    tid char(30) NOT NULL,
-    cusername char(20) NOT NULL,
-    busername char(20) NOT NULL,
-    tcomment char(250),
 INSERT INTO User_Transaction
 VALUES
 ('1ef131', 'Fred', 'Jake', 'The worst experience ever!'),
@@ -202,51 +198,136 @@ VALUES
 
 INSERT INTO Item   
 VALUES
+('12345', 'This is an expansion pack for Skyrim (PC ONLY)', 'DIGITAL'),
+('54321', 'This is a T-shirt worthy of any knight.', 'State College, PA, USA'),
+('12345abc', 'This is a 200 card collection of Pokémon cards.', 'Wayne, PA, USA'),
+('12345123', 'This limited edition FairyTail trading card!', 'New York, New York, USA'),
+('1234abc', 'This is an expansion pack for Sims 4 (PC ONLY).', 'DIGITAL'),
 
 INSERT INTO Auction_Item
 VALUES
+(),
+(),
+(),
+(),
+();
 
 INSERT INTO Sale_Item
 VALUES
+(),
+(),
+(),
+(),
+();
 
-INSERT INTO 
+INSERT INTO Category
 VALUES
+(),
+(),
+(),
+(),
+();
 
-INSERT INTO 
+INSERT INTO Categorized
 VALUES
+(),
+(),
+(),
+(),
+();
 
-INSERT INTO 
+INSERT INTO Connected_To
 VALUES
+(),
+(),
+(),
+(),
+();
 
-INSERT INTO 
+INSERT INTO Loc_Addresses
 VALUES
+(),
+(),
+(),
+(),
+();
 
-INSERT INTO 
+INSERT INTO Cont_Phone
 VALUES
+(),
+(),
+(),
+(),
+();
 
-INSERT INTO 
+INSERT INTO Cash_Credit_Card
 VALUES
+(),
+(),
+(),
+(),
+();
 
-INSERT INTO 
+INSERT INTO Search_Key
 VALUES
+(),
+(),
+(),
+(),
+();
 
-INSERT INTO 
+INSERT INTO Supplier_Trans
 VALUES
+(),
+(),
+(),
+(),
+();
 
-INSERT INTO 
+INSERT INTO Runs_Shop
 VALUES
+(),
+(),
+(),
+(),
+();
 
-INSERT INTO 
+INSERT INTO Stocked_By
 VALUES
+(),
+(),
+(),
+(),
+();
 
-INSERT INTO 
+INSERT INTO Wishes_For
 VALUES
+(),
+(),
+(),
+(),
+();
 
-INSERT INTO 
+INSERT INTO Filled_With
 VALUES
+(),
+(),
+(),
+(),
+();
 
-INSERT INTO 
+INSERT INTO Supplier_Stocked
 VALUES
+(),
+(),
+(),
+(),
+();
 
-INSERT INTO 
+INSERT INTO User_Stocked
 VALUES
+(),
+(),
+(),
+(),
+();
