@@ -17,164 +17,274 @@ function GetDatabaseConnection()
 function getAddressesByUser( $userName )
 {
 	//query creation
-	$loc_addressQuery = "SELECT * FROM Loc_Addresses A WHERE A.username = " . $userName;
+	$loc_addressQuery = "SELECT * FROM Loc_Addresses A WHERE A.username LIKE '".$userName."'";
 
 	//query database
 	$databaseConnection = GetDatabaseConnection();
 	$loc_addressResult = $databaseConnection->query($loc_addressQuery);
 
+	//If no results then stop
+	if($loc_addressResult == false){
+		return "No results for '".$userName."'";
+	}
+
+	//Loop through results and add each row to array
+	$output = array();
+	while($row = $loc_addressResult->fetch_assoc()){
+		array_push($output, $row);
+	}
+
 	//format output
-	echo json_encode($loc_addressResult);
-	return "I'm all of the addresses for the user ".$userName;
+	return json_encode($output);
 }
 
 //This function will return all of the data associated with an aution item when given its id
 function getAuctionItem( $itemId )
 {
 	//query creation
-	$auc_itemQuery = "SELECT * FROM Auction_Item A WHERE A.iid = " . $itemId;
+	$auc_itemQuery = "SELECT * FROM Auction_Item A WHERE A.iid LIKE '".$itemId."'";
 
 	//query database
 	$databaseConnection = GetDatabaseConnection();
 	$auc_itemResult = $databaseConnection->query($auc_itemQuery);
 
+	//If no results then stop
+	if($auc_itemResult == false){
+		return "No results for '".$itemId."'";
+	}
+
+	//Loop through results and add each row to array
+	$output = array();
+	while($row = $auc_itemResult->fetch_assoc()){
+		array_push($output, $row);
+	}
+
 	//format output
-	echo json_encode($auc_itemResult);
-	return "I'm information for the auction item ".$itemId;
+	return json_encode($output);
 }
 
 //This function will return the category of an item when given its id
 function getCategoryByItem( $itemId )
 {
 	//query creation
-	$categoryQuery = "SELECT * FROM Category C WHERE C.iid = " . $itemId;
+	$categoryQuery = "SELECT * FROM Category C WHERE C.iid LIKE '".$itemId."'";
 
 	//query database
 	$databaseConnection = GetDatabaseConnection();
 	$categoryResult = $databaseConnection->query($categoryQuery);
+
+	//If no results then stop
+	if($categoryResult == false){
+		return "No results for '".$itemId."'";
+	}
+
+	//Loop through results and add each row to array
+	$output = array();
+	while($row = $categoryResult->fetch_assoc()){
+		array_push($output, $row);
+	}
 	
 	//format output
-	echo json_encode($categoryResult);
-	return "I'm a category for the item ".$itemId;
+	return json_encode($output);
 }
 
 //This function will return all credit cards of a user when supplied with a username
 function getCreditCardByUser( $userName )
 {
 	//query creation
-	$credit_cardQuery = "SELECT * FROM Cash_Credit_Card C WHERE C.username = " . $userName;
+	$credit_cardQuery = "SELECT * FROM Cash_Credit_Card C WHERE C.username LIKE '".$userName."'";
 
 	//query database
 	$databaseConnection = GetDatabaseConnection();
 	$credit_cardResult = $databaseConnection->query($credit_cardQuery);
 	
+	//If no results then stop
+	if($credit_cardResult == false){
+		return "No results for '".$username."'";
+	}
+
+	//Loop through results and add each row to array
+	$output = array();
+	while($row = $credit_cardResult->fetch_assoc()){
+		array_push($output, $row);
+	}
+	
 	//format output
-	echo json_encode($credit_cardResult);
-	return "I'm all of the credit cards for the user ".$userName;
+	return json_encode($output);
 }
 
 //This function will return all of the phone numbers of a user when supplied with a username
 function getPhoneNumberByUser( $userName )
 {
 	//query creation
-	$phone_numQuery = "SELECT * FROM Cont_Phone P WHERE P.username = " . $userName;
+	$phone_numQuery = "SELECT * FROM Cont_Phone P WHERE P.username LIKE '".$userName."'";
 
 	//query database
 	$databaseConnection = GetDatabaseConnection();
 	$phone_numResult = $databaseConnection->query($phone_numQuery);
 
+	//If no results then stop
+	if($phone_numResult == false){
+		return "No results for '".$username."'";
+	}
+
+	//Loop through results and add each row to array
+	$output = array();
+	while($row = $phone_numResult->fetch_assoc()){
+		array_push($output, $row);
+	}
+	
 	//format output
-	echo json_encode($phone_numResult);
-	return "I'm all of the phone number for the user ".$userName;
+	return json_encode($output);
 }
 
 //This function will return a sale items information when given its id
 function getSaleItem( $itemId )
 {
 	//query creation
-	$sale_itemQuery = "SELECT * FROM Sale_Item S WHERE S.iid = " . $itemId;
+	$sale_itemQuery = "SELECT * FROM Sale_Item S WHERE S.iid LIKE '".$itemId."'";
 
 	//query database
 	$databaseConnection = GetDatabaseConnection();
 	$sale_itemResult = $databaseConnection->query($sale_itemQuery);
+	
+	//If no results then stop
+	if($sale_itemResult == false){
+		return "No results for '".$itemId."'";
+	}
 
+	//Loop through results and add each row to array
+	$output = array();
+	while($row = $sale_itemResult->fetch_assoc()){
+		array_push($output, $row);
+	}
+	
 	//format output
-	echo json_encode($sale_itemResult);
-	return "I'm the information for the sale item ".$itemId;
+	return json_encode($output);
 }
 
 //This function will return all items associated with a keyword when supplied with a keyword
 function getItemsByKeyword( $keyword )
 {
 	//query creation
-	$search_keyQuery = "SELECT * FROM Search_Key S WHERE S.kid = " . $keyword;
+	$search_keyQuery = "SELECT * FROM Search_Key S WHERE S.kid LIKE '".$keyword"'";
 
 	//query database
 	$databaseConnection = GetDatabaseConnection();
 	$search_keyResult = $databaseConnection->query($search_keyQuery);
 
+	//If no results then stop
+	if($search_keyResult == false){
+		return "No results for '".$keyword."'";
+	}
+
+	//Loop through results and add each row to array
+	$output = array();
+	while($row = $search_keyResult->fetch_assoc()){
+		array_push($output, $row);
+	}
+	
 	//format output
-	echo json_encode($search_keyResult);
-	return "I'm all of the items that have the keyword ".$keyword;
+	return json_encode($output);
 }
 
 //This function will return the shop information of a user when supplied with a user name
 function getShopByUser( $userName )
 {
 	//query creation
-	$shopQuery = "SELECT * FROM Runs_Shop S WHERE S.username = " . $userName;
+	$shopQuery = "SELECT * FROM Runs_Shop S WHERE S.username LIKE '".$userName."'";
 
 	//query database
 	$databaseConnection = GetDatabaseConnection();
 	$shopResult = $databaseConnection->query($shopQuery);
 
+	//If no results then stop
+	if($shopResult == false){
+		return "No results for '".$userName."'";
+	}
+
+	//Loop through results and add each row to array
+	$output = array();
+	while($row = $shopResult->fetch_assoc()){
+		array_push($output, $row);
+	}
+	
 	//format output
-	echo json_encode($shopResult);
-	return "I'm the shop information for the user ".$userName;
-}
+	return json_encode($output);}
 
 //This function will return the information for a supplier
 function getSupplier( $supplierName )
 {
 	//query creation
-	$supplierQuery = "SELECT * FROM Supplier_Stocked S WHERE S.username = " . $userName;
+	$supplierQuery = "SELECT * FROM Supplier_Stocked S WHERE S.username LIKE '".$supplierName."'";
 
 	//query database
 	$databaseConnection = GetDatabaseConection();
 	$supplierResult = $databaseConnection->query($supplierQuery);
 
+	//If no results then stop
+	if($supplierResult == false){
+		return "No results for '".$supplierName."'";
+	}
+
+	//Loop through results and add each row to array
+	$output = array();
+	while($row = $supplierResult->fetch_assoc()){
+		array_push($output, $row);
+	}
+	
 	//format output
-	echo json_encode($supplierResult);
-	return "I'm the information for the supplier ".$supplierName;
+	return json_encode($output);
 }
 
 //This function will return the list of items stocked by a supplier when supplied with a supplier name
 function getStockedBySupplier( $supplierName )
 {
 	//query creation
-	$supplier_stockQuery = "SELECT * FROM Supplier_Stocked S WHERE S.username = " . $supplierName;
+	$supplier_stockQuery = "SELECT * FROM Supplier_Stocked S WHERE S.username LIKE '".$supplierName."'";
+	
 	//query database
 	$databaseConnection = GetDatabaseConnection();
-	$supplier_stockResult = $databaseConnection->query($supplier_stockQuery);
-	//format output
 	
-	echo json_encode($supplier_stockQuery);
-	return "I'm the items stocked by the supplier ".$supplierName;
+	$supplier_stockResult = $databaseConnection->query($supplier_stockQuery);
+	//If no results then stop
+	if($supplier_stockResult == false){
+		return "No results for '".$supplierName."'";
+	}
+
+	//Loop through results and add each row to array
+	$output = array();
+	while($row = $supplier_stockResult->fetch_assoc()){
+		array_push($output, $row);
+	}
+	
+	//format output
+	return json_encode($output);
 }
 
 //This function will return all of the transactions of a supplier when supplied with a supplier name
 function getSoldBySupplier( $supplierName )
 {
 	//query creation
-	$supplier_transQuery = "SELECT * FROM Supplier_Trans S WHERE S.username = " .$supplierName;
+	$supplier_transQuery = "SELECT * FROM Supplier_Trans S WHERE S.username LIKE '".$supplierName."'";
 	
 	//query database
 	$databaseConnection = GetDatabaseConnection();
 	$supplier_transResult = $databaseConnection->query($supplier_transQuery);
 
+	//If no results then stop
+	if($supplier_transResult == false){
+		return "No results for '".$supplierName."'";
+	}
+
+	//Loop through results and add each row to array
+	$output = array();
+	while($row = $supplier_transResult->fetch_assoc()){
+		array_push($output, $row);
+	}
+	
 	//format output
-	echo json_encode($supplier_transResult);
-	return "I'm all of the transactions of supplier ".$supplierName;
+	return json_encode($output);
 }
 
 //This function will return all of the information about a user when supplied with a user name
@@ -209,45 +319,75 @@ function getUser( $userName )
 function getStockedByUser( $userName )
 {
 	//query creation
-	$user_stockedQuery = "SELECT * FROM User_Stocked U WHERE U.username = " . $userName;
+	$user_stockedQuery = "SELECT * FROM User_Stocked U WHERE U.username LIKE '".$userName."'";
 
 	//query database
 	$databaseConnection = GetDatabaseConnection();
 	$user_stockedResult = $databaseConnection->query($user_stockedQuery);
 
+	//If no results then stop
+	if($user_stockedResult == false){
+		return "No results for '".$userName."'";
+	}
+
+	//Loop through results and add each row to array
+	$output = array();
+	while($row = $user_stockedResult->fetch_assoc()){
+		array_push($output, $row);
+	}
+	
 	//format output
-	echo json_encode($user_stockedResult);
-	return "I'm all of the items stocked by the user ".$userName;
+	return json_encode($output);
 }
 
 //This function will return all of the transactions of a user when supplied with a user name
 function getSoldByUser( $userName )
 {
 	//query creation
-	$user_transQuery = "SELECT * FROM User_Transaction U WHERE U.username = " . $userName;
+	$user_transQuery = "SELECT * FROM User_Transaction U WHERE U.username LIKE ".$userName."'";
 
 	//query database
 	$databaseConnection = GetDatabaseConnection();
 	$user_tranResult = $databaseConnection->query($user_tyransQuery);
 
+	//If no results then stop
+	if($user_tranResult == false){
+		return "No results for '".$userName."'";
+	}
+
+	//Loop through results and add each row to array
+	$output = array();
+	while($row = $user_tranResult->fetch_assoc()){
+		array_push($output, $row);
+	}
+	
 	//format output
-	echo json_encode($user_tranResult);
-	return "I'm all of the transactions of the user ".$userName;
+	return json_encode($output);
 }
 
 //This function will return the wishlist of a user when supplied with a user name
 function getWishedByUser( $userName )
 {
 	//query creation
-	$wish_listQuery = "SELECT * FROM Whishes_For W WHERE W.username = " . $userName;
+	$wish_listQuery = "SELECT * FROM Whishes_For W WHERE W.username LIKE ".$userName."'";
 
 	//query database
 	$databaseConnection = GetDatabaseConnection();
 	$wish_listResult = $databaseConnection->query($wish_listQuery);
+	
+	//If no results then stop
+	if($wish_listResult == false){
+		return "No results for '".$userName."'";
+	}
 
+	//Loop through results and add each row to array
+	$output = array();
+	while($row = $wish_listResult->fetch_assoc()){
+		array_push($output, $row);
+	}
+	
 	//format output
-	echo json_encode($wish_listResult);
-	return "I'm all of the items on the wishlist of the user ".$userName;
+	return json_encode($output);
 }
 
 ?>
