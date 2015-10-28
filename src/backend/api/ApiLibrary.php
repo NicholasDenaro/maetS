@@ -5,11 +5,14 @@
 function getAddressesByUser( $userName )
 {
 	//query creation
-	
+	$loc_addressQuery = "SELECT * FROM Loc_Addresses A WHERE A.username = " . $userName;
+
 	//query database
-	
+	$databaseConnection = GetDatabaseConnection();
+	$loc_addressResult = $databaseConnection->query($loc_addressQuery);
+
 	//format output
-	
+	echo json_encode($loc_addressResult)
 	return "I'm all of the addresses for the user ".$userName;
 }
 
@@ -17,11 +20,14 @@ function getAddressesByUser( $userName )
 function getAuctionItem( $itemId )
 {
 	//query creation
-	
+	$auc_itemQuery = "SELECT * FROM Auction_Item A WHERE A.iid = " . $itemId;
+
 	//query database
-	
+	$databaseConnection = GetDatabaseConnection();
+	$auc_itemResult = $databaseConnection->query($auc_itemQuery);
+
 	//format output
-	
+	echo json_encode($auc_itemResult);
 	return "I'm information for the auction item ".$itemId;
 }
 
@@ -29,11 +35,14 @@ function getAuctionItem( $itemId )
 function getCategoryByItem( $itemId )
 {
 	//query creation
-	
+	$categoryQuery = "SELECT * FROM Category C WHERE C.iid = " . $itemId;
+
 	//query database
+	$databaseConnection = GetDatabaseConnection();
+	$categoryResult = $databaseConnection->query($categoryQuery);
 	
 	//format output
-	
+	echo json_encode($categoryResult);
 	return "I'm a category for the item ".$itemId;
 }
 
@@ -41,11 +50,14 @@ function getCategoryByItem( $itemId )
 function getCreditCardByUser( $userName )
 {
 	//query creation
+	$credit_cardQuery = "SELECT * FROM Cash_Credit_Card C WHERE C.username = " . $userName;
 
 	//query database
-
-	//format output
+	$databaseConnection = GetDatabaseConnection();
+	$credit_cardResult = $databaseConnection->query($credit_cardQuery);
 	
+	//format output
+	echo json_encode($credit_cardResult);
 	return "I'm all of the credit cards for the user ".$userName;
 }
 
@@ -53,11 +65,14 @@ function getCreditCardByUser( $userName )
 function getPhoneNumberByUser( $userName )
 {
 	//query creation
+	$phone_numQuery = "SELECT * FROM Cont_Phone P WHERE P.username = " . $userName;
 
 	//query database
+	$databaseConnection = GetDatabaseConnection();
+	$phone_numResult = $databaseConnection->query($phone_numQuery);
 
 	//format output
-	
+	echo json_encode($phone_numResult);
 	return "I'm all of the phone number for the user ".$userName;
 }
 
@@ -65,11 +80,14 @@ function getPhoneNumberByUser( $userName )
 function getSaleItem( $itemId )
 {
 	//query creation
+	$sale_itemQuery = "SELECT * FROM Sale_Item S WHERE S.iid = " . $itemId;
 
 	//query database
+	$databaseConnection = GetDatabaseConnection();
+	$sale_itemResult = $databaseConnection->query($sale_itemQuery);
 
 	//format output
-	
+	echo json_encode($sale_itemResult);
 	return "I'm the information for the sale item ".$itemId;
 }
 
@@ -77,11 +95,14 @@ function getSaleItem( $itemId )
 function getItemsByKeyword( $keyword )
 {
 	//query creation
+	$search_keyQuery = "SELECT * FROM Search_Key S WHERE S.kid = " . $keyword;
 
 	//query database
+	$databaseConnection = GetDatabaseConnection();
+	$search_keyResult = $databaseConnection->query($search_keyQuery);
 
 	//format output
-	
+	echo json_encode($search_keyResult);
 	return "I'm all of the items that have the keyword ".$keyword;
 }
 
@@ -89,11 +110,14 @@ function getItemsByKeyword( $keyword )
 function getShopByUser( $userName )
 {
 	//query creation
+	$shopQuery = "SELECT * FROM Runs_Shop S WHERE S.username = " . $userName;
 
 	//query database
+	$databaseConnection = GetDatabaseConnection();
+	$shopResult = $databaseConnection->query($shopQuery);
 
 	//format output
-	
+	echo json_encode($shopResult);
 	return "I'm the shop information for the user ".$userName;
 }
 
@@ -101,11 +125,14 @@ function getShopByUser( $userName )
 function getSupplier( $supplierName )
 {
 	//query creation
+	$supplierQuery = "SELECT * FROM Supplier_Stocked S WHERE S.username = " . $userName;
 
 	//query database
+	$databaseConnection = GetDatabaseConection();
+	$supplierResult = $databaseConnection->query($supplierQuery);
 
 	//format output
-	
+	echo json_encode($supplierResult);
 	return "I'm the information for the supplier ".$supplierName;
 }
 
@@ -113,11 +140,13 @@ function getSupplier( $supplierName )
 function getStockedBySupplier( $supplierName )
 {
 	//query creation
-
+	$supplier_stockQuery = "SELECT * FROM Supplier_Stocked S WHERE S.username = " . $supplierName;
 	//query database
-
+	$databaseConnection = GetDatabaseConnection();
+	$supplier_stockResult = $databaseConnection->query($supplier_stockQuery);
 	//format output
 	
+	echo json_encode($supplier_stockQuery);
 	return "I'm the items stocked by the supplier ".$supplierName;
 }
 
@@ -125,11 +154,14 @@ function getStockedBySupplier( $supplierName )
 function getSoldBySupplier( $supplierName )
 {
 	//query creation
-
+	$supplier_transQuery = "SELECT * FROM Supplier_Trans S WHERE S.username = " .$supplierName;
+	
 	//query database
+	$databaseConnection = GetDatabaseConnection();
+	$supplier_transResult = $databaseConnection->query($supplier_transQuery);
 
 	//format output
-	
+	echo json_encode($supplier_transResult);
 	return "I'm all of the transactions of supplier ".$supplierName;
 }
 
@@ -137,11 +169,14 @@ function getSoldBySupplier( $supplierName )
 function getUser( $userName )
 {
 	//query creation
+	$userQuery = "SELECT * FROM Usr U WHERE U.username = " . $userName;
 
 	//query database
+	$databaseConnection = GetDatabaseConnection();
+	$userResult = $databaseConnection->query($userQuery);
 
 	//format output
-	
+	echo json_encode($userResult);
 	return "I'm all of the information about the user ".$userName;
 }
 
@@ -149,11 +184,14 @@ function getUser( $userName )
 function getStockedByUser( $userName )
 {
 	//query creation
+	$user_stockedQuery = "SELECT * FROM User_Stocked U WHERE U.username = " . $userName;
 
 	//query database
+	$databaseConnection = GetDatabaseConnection();
+	$user_stockedResult = $databaseConnection->query($user_stockedQuery);
 
 	//format output
-	
+	echo json_encode($user_stockedResult);
 	return "I'm all of the items stocked by the user ".$userName;
 }
 
@@ -161,11 +199,14 @@ function getStockedByUser( $userName )
 function getSoldByUser( $userName )
 {
 	//query creation
+	$user_transQuery = "SELECT * FROM User_Transaction U WHERE U.username = " . $userName;
 
 	//query database
+	$databaseConnection = GetDatabaseConnection();
+	$user_tranResult = $databaseConnection->query($user_tyransQuery);
 
 	//format output
-	
+	echo json_encode($user_tranResult);
 	return "I'm all of the transactions of the user ".$userName;
 }
 
@@ -173,11 +214,14 @@ function getSoldByUser( $userName )
 function getWishedByUser( $userName )
 {
 	//query creation
+	$wish_listQuery = "SELECT * FROM Whishes_For W WHERE W.username = " . $userName;
 
 	//query database
+	$databaseConnection = GetDatabaseConnection();
+	$wish_listResult = $databaseConnection->query($wish_listQuery);
 
 	//format output
-	
+	echo json_encode($wish_listResult);
 	return "I'm all of the items on the wishlist of the user ".$userName;
 }
 
