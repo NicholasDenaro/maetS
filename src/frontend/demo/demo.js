@@ -38,7 +38,7 @@ function makeAPICallAndAlert( call, input )
 			break;
 	}
 	
-	var myUrl = 'http://localhost/maets/backend/api/'+call+".php?"+param +"="+input;
+	var myUrl = '/maets/backend/api/'+call+".php?"+param +"="+input;
 	//alert(myUrl);
 	
 	$.ajax({
