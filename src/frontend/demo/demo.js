@@ -45,7 +45,23 @@ function makeAPICallAndAlert( call, input )
 	
 		url: myUrl,
 		dataType: 'text',
-		success: function (data){alert(data);},
+		success: function (data){
+			//alert(data);
+			var json = getJSON(data);
+			if(json!=null)
+				document.getElementById("output").innerHTML="results:<br><pre>"+JSON.stringify(json,"\n","  ")+"</pre>";
+			else
+				document.getElementById("output").innerHTML=data;
+		},
 		error: function(xhr, textStatus, errorThrown) {alert("ERROR:\n" + errorThrown);}
 	})
+}
+
+function getJSON(str) {
+    try {
+        return JSON.parse(str);
+    } catch (e) {
+    	//alert(e);
+        return null;
+    }
 }
