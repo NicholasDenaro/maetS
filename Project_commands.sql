@@ -14,6 +14,7 @@ CREATE TABLE User_Transaction (
     tid char(30) NOT NULL,
     cusername char(20) NOT NULL,
     busername char(20) NOT NULL,
+    tcomment char(250),
     PRIMARY KEY (tid, cusername, busername),
     FOREIGN KEY (iid) REFERENCES Item(iid),
     FOREIGN KEY (cusername) REFERENCES Usr(username),
@@ -176,3 +177,76 @@ CREATE TABLE User_Stocked (
     FOREIGN KEY (iid) REFERENCES Item(iid),
     FOREIGN KEY (username) REFERENCES Usr (username)
 )ENGINE=INNODB;
+
+INSERT INTO Usr 
+VALUES
+('Fred', 'Pa$$W0rd', 19000, 'M', 03/15/92, 'DemoFred123', 'Fred@fred.com'),
+('Alice', 'purpleFl0w3R', 45000, 'F', 06/05/88, 'CelticAlice220', 'Alice@alice.com'),
+('Jake', 'DrAg0n1t3', 92000, 'M', 02/09/94, 'Sepheroth23', 'jake@jake.com'),
+('Christopher', 'Train!Hard3R', 130000, 'M', 12/05/90, 'ChromeNight89', 'chris@chris.com'),
+('Jessica', 'Discover1t', 34000, 'F', 10/28/96, 'Jessintime', 'jessica@jess.net');
+
+
+utdate date,
+    tid char(30) NOT NULL,
+    cusername char(20) NOT NULL,
+    busername char(20) NOT NULL,
+    tcomment char(250),
+INSERT INTO User_Transaction
+VALUES
+('1ef131', 'Fred', 'Jake', 'The worst experience ever!'),
+('f3134f13v', 'Jessica', 'Christopher', 'Everything went well! I am very satisfied.'),
+('dfvr1f3421q45', 'Christopher', 'Jake', 'Very good service. 5 starts.'),
+('141v2f5', 'Alice', 'Jake', ''),
+('2n637472nb', 'Jessica', 'Alice', 'This is what I was looking for! I am so excited!');
+
+INSERT INTO Item   
+VALUES
+
+INSERT INTO Auction_Item
+VALUES
+
+INSERT INTO Sale_Item
+VALUES
+
+INSERT INTO 
+VALUES
+
+INSERT INTO 
+VALUES
+
+INSERT INTO 
+VALUES
+
+INSERT INTO 
+VALUES
+
+INSERT INTO 
+VALUES
+
+INSERT INTO 
+VALUES
+
+INSERT INTO 
+VALUES
+
+INSERT INTO 
+VALUES
+
+INSERT INTO 
+VALUES
+
+INSERT INTO 
+VALUES
+
+INSERT INTO 
+VALUES
+
+INSERT INTO 
+VALUES
+
+INSERT INTO 
+VALUES
+
+INSERT INTO 
+VALUES
