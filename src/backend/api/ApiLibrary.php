@@ -1,6 +1,18 @@
 <?php
 //This file will contain all of the code for the API calls
 
+function GetDatabaseConnection()
+//Post: A database connection has been created and returned
+{
+    $databaseConnection = new mysqli("localhost", "root", "", "431w_proj");
+    
+    if ($databaseConnection->connect_error)
+    {
+        ThrowFatalError("Could not connect to database.");
+    }
+    return $databaseConnection;
+} // END GetDatabaseConnection
+
 //This function will get all of a users addresses when given their username
 function getAddressesByUser( $userName )
 {
@@ -12,7 +24,7 @@ function getAddressesByUser( $userName )
 	$loc_addressResult = $databaseConnection->query($loc_addressQuery);
 
 	//format output
-	echo json_encode($loc_addressResult)
+	echo json_encode($loc_addressResult);
 	return "I'm all of the addresses for the user ".$userName;
 }
 
@@ -169,15 +181,28 @@ function getSoldBySupplier( $supplierName )
 function getUser( $userName )
 {
 	//query creation
-	$userQuery = "SELECT * FROM Usr U WHERE U.username = " . $userName;
+	//Use "LIKE" because then we can pattern match.
+	$userQuery = "SELECT * FROM Usr U WHERE U.username LIKE '" . $userName . "'";
 
 	//query database
 	$databaseConnection = GetDatabaseConnection();
 	$userResult = $databaseConnection->query($userQuery);
 
+	//If there are not results then stop.
+	if($userResult === false)
+	{
+		return "No results for '".$userName."'";
+	}
+
+	//Loop through the results and add each row to an array.
+	$output = array();
+	while($row = $userResult->fetch_assoc())
+	{
+		array_push($output, $row);
+	}
+	
 	//format output
-	echo json_encode($userResult);
-	return "I'm all of the information about the user ".$userName;
+	return json_encode($output);
 }
 
 //This function will return all of the items stocked by a user when supplied with a user name

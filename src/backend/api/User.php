@@ -9,6 +9,7 @@ if(isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === 'GET')
 	if (!isset($_GET['userName']))
 	{
 		//handle error
+		throw new Exception("userName not set.");
 	}
 	else
 	{

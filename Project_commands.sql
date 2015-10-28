@@ -14,6 +14,7 @@ CREATE TABLE User_Transaction (
     tid char(30) NOT NULL,
     cusername char(20) NOT NULL,
     busername char(20) NOT NULL,
+    iid char(30) NOT NULL,
     PRIMARY KEY (tid, cusername, busername),
     FOREIGN KEY (iid) REFERENCES Item(iid),
     FOREIGN KEY (cusername) REFERENCES Usr(username),
