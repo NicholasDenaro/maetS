@@ -167,7 +167,7 @@ function getSaleItem( $itemId )
 function getItemsByKeyword( $keyword )
 {
 	//query creation
-	$search_keyQuery = "SELECT * FROM Search_Key S WHERE S.kid LIKE '".$keyword."'";
+	$search_keyQuery = "SELECT * FROM Search_Key S WHERE S.word LIKE '".$keyword."'";
 
 	//query database
 	$databaseConnection = GetDatabaseConnection();
