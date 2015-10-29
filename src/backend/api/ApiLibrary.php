@@ -67,7 +67,7 @@ function getAuctionItem( $itemId )
 function getCategoryByItem( $itemId )
 {
 	//query creation
-	$categoryQuery = "SELECT * FROM Category C WHERE C.iid LIKE '".$itemId."'";
+	$categoryQuery = "SELECT * FROM Categorized C WHERE C.iid LIKE '".$itemId."'";
 
 	//query database
 	$databaseConnection = GetDatabaseConnection();
