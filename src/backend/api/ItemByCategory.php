@@ -6,19 +6,14 @@ require_once("ApiLibrary.php");
 if(isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === 'GET')
 {
 	//This checks to see if anything was passed into the parameter userName
-	if (!isset($_GET['itemId']) && !isset($_GET['catId']))
+	if (!isset($_GET['itemId']))
 	{
 		//handle error
 	}
-	else if(isset($_GET['itemId']))
+	else
 	{
 		$_itemId=($_GET['itemId']);
-		echo getCategoryByItem($_itemId);
-	}
-	else if(isset($_GET['catId']))
-	{
-		$_catId=($_GET['catId']);
-		echo getItemsByCategory($_catId);
+		echo getSaleItem($_itemId);
 	}
 }
 

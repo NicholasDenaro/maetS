@@ -1,24 +1,36 @@
-function init()
+function initItems()
 {
-	var URL = "../../backend/api/SaleItem.php?itemId=%";
-	$.ajax({
-		url: URL,
-		success: function(data)
-		{
-			processResponse(data);
-		},
-		error: function(xhr, ajaxOptions, thrownError)
-		{
-			console.log("Error on ajax call...\n" + xhr.status + "\n" + thrownError + "\nURL: " + URL);
-		}
-	});
+	var id = getParameterFromURL();
 
-	var URL = "../../backend/api/AuctionItem.php?itemId=%";
+	var URL="";
+	if(id[0] == null)
+	{
+		URL = "../../backend/api/SaleItem.php?itemId=%";
+	}
+	else if(id[0] == "catId")
+	{
+		URL = "../../backend/api/Categorized.php?catId="+id[1];
+	}
 	$.ajax({
 		url: URL,
 		success: function(data)
 		{
-			processResponse(data);
+			processItemResponse(data);
+			if(id[0]==null)
+			{
+				var URL = "../../backend/api/AuctionItem.php?itemId=%";
+				$.ajax({
+					url: URL,
+					success: function(data)
+					{
+						processItemResponse(data);
+					},
+					error: function(xhr, ajaxOptions, thrownError)
+					{
+						console.log("Error on ajax call...\n" + xhr.status + "\n" + thrownError + "\nURL: " + URL);
+					}
+				});
+			}
 		},
 		error: function(xhr, ajaxOptions, thrownError)
 		{
@@ -27,9 +39,20 @@ function init()
 	});
 }
 
-function processResponse(data)
+function getParameterFromURL()
 {
-	//alert(data);
+	var str = window.location.search;
+	str = str.substring(str.lastIndexOf("?") + 1);
+	var pair = str.split('=');
+	if(pair[0] == "iid" || pair[0] == "catId")
+	{
+		return pair;
+	}
+	return null;
+}
+
+function processItemResponse(data)
+{
 	data = JSON.parse(data);
 	for(var i = 0; i < data.length; i++)
 	{

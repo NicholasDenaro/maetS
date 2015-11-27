@@ -1,11 +1,11 @@
-function init()
+function initCategories()
 {
-	var URL = "../../backend/api/Categories.php?";
+	var URL = "../../backend/api/Categories.php?catId=432g7h6g45435ff";
 	$.ajax({
 		url: URL,
 		success: function(data)
 		{
-			processResponse(data);
+			processCategoryResponse(data);
 		},
 		error: function(xhr, ajaxOptions, thrownError)
 		{
@@ -14,80 +14,25 @@ function init()
 	});
 }
 
-function processResponse(data)
+function processCategoryResponse(data)
 {
-	//alert(data);
 	data = JSON.parse(data);
 	for(var i = 0; i < data.length; i++)
 	{
-		var item = data[i];
-		var div = createItemDisplay(item);
+		var cat = data[i];
+		var div = createCategory(cat);
 
-		var displayCase = document.getElementById("display-case");
+		var displayCase = document.getElementById("category-list");
 		displayCase.appendChild(div);
 	}
 }
 
-function createItemDisplay(item)
+function createCategory(cat)
 {
-	var outer = document.createElement("div");
-	outer.className = "col-sm-4 col-lg-4 col-md-4";
-
-	var thumb = document.createElement("div");
-	thumb.className = "thumbnail";
-	outer.appendChild(thumb);
-
-	var img = document.createElement("img");
-	img.alt = "";
-	if(item.img != null)
-		img.src = "../images/" + item.img;
-	else
-		img.src="../images/na.jpg";
-	img.style="width: auto; height: 150px;"
-	thumb.appendChild(img);
-
-	var capt = document.createElement("div");
-	capt.className ="caption";
-	thumb.appendChild(capt);
-
-	var price = document.createElement("h4");
-	price.className = "pull-right";
-	if(item.price != undefined)
-	{
-		price.innerHTML = "$" + item.price;
-	}
-	else
-	{
-		price.innerHTML = "$" + item.min_price;
-	}
-	capt.appendChild(price);
-
-	var nameheader = document.createElement("h4");
 	var name = document.createElement("a");
-	name.href="../item/?iid="+item.iid;
-	name.innerHTML = item.iid;
-	capt.appendChild(nameheader);
-	nameheader.appendChild(name);
+	name.className = "list-group-item";
+	name.href="./?catId="+cat.cid;
+	name.innerHTML = cat.cname;
 
-	var desc = document.createElement("p");
-	desc.innerHTML = item.descr;
-	capt.appendChild(desc);
-
-	var ratingHolder = document.createElement("div");
-	ratingHolder.className = "ratings";
-	thumb.appendChild(ratingHolder);
-
-	var ratingCount = document.createElement("p");
-	ratingCount.className = "pull-right";
-	ratingCount.innerHTML = "X"+" reviews";
-	ratingHolder.appendChild(ratingCount);
-
-	var starHolder = document.createElement("p");
-	ratingHolder.appendChild(starHolder);
-
-	var star = document.createElement("span");
-	star.className = "glyphicon glyphicon-star";
-	starHolder.appendChild(star);
-
-	return outer;
+	return name;
 }

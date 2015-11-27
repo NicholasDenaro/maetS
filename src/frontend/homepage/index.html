@@ -26,7 +26,7 @@
 
 </head>
 
-<body onload="init();">
+<body onload="initItems();initCategories();">
 
     <!-- Navigation -->
     <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
@@ -67,10 +67,10 @@
 
             <div class="col-md-3">
                 <p class="lead">Shop Name</p>
-                <div class="list-group">
-                    <a href="#" class="list-group-item">Category 1</a>
+                <div class="list-group" id="category-list">
+                    <!--<a href="#" class="list-group-item">Category 1</a>
                     <a href="#" class="list-group-item">Category 2</a>
-                    <a href="#" class="list-group-item">Category 3</a>
+                    <a href="#" class="list-group-item">Category 3</a>-->
                 </div>
             </div>
 
@@ -257,7 +257,7 @@
     <!-- Bootstrap Core JavaScript -->
     <script src="js/bootstrap.min.js"></script>
     <script src="js/load_items.js"></script>
-
+    <script src="js/load_categories.js"></script>
 </body>
 
 </html>

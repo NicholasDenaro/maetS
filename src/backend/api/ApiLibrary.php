@@ -64,30 +64,6 @@ function getAuctionItem( $itemId )
 	return json_encode($output);
 }
 
-function getChildrenCategories( $catId )
-{
-	//query creation
-	$categoryQuery = "SELECT * FROM Category C1 NATURAL JOIN Connected_To, Category C2 WHERE mcid = C2.cid AND C1.cid = '".$catId."'";
-
-	//query database
-	$databaseConnection = GetDatabaseConnection();
-	$categoryResult = $databaseConnection->query($categoryQuery);
-
-	//If no results then stop
-	if($categoryResult == false){
-		return "No results for '".$catId."'";
-	}
-
-	//Loop through results and add each row to array
-	$output = array();
-	while($row = $categoryResult->fetch_assoc()){
-		array_push($output, $row);
-	}
-	
-	//format output
-	return json_encode($output);
-}
-
 //This function will return the category of an item when given its id
 function getCategoryByItem( $itemId )
 {
@@ -101,6 +77,30 @@ function getCategoryByItem( $itemId )
 	//If no results then stop
 	if($categoryResult == false){
 		return "No results for '".$itemId."'";
+	}
+
+	//Loop through results and add each row to array
+	$output = array();
+	while($row = $categoryResult->fetch_assoc()){
+		array_push($output, $row);
+	}
+	
+	//format output
+	return json_encode($output);
+}
+
+function getChildrenCategories( $catId )
+{
+	//query creation
+	$categoryQuery = "SELECT * FROM Category C1 NATURAL JOIN Connected_To, Category C2 WHERE mcid = C2.cid AND C1.cid = '".$catId."'";
+
+	//query database
+	$databaseConnection = GetDatabaseConnection();
+	$categoryResult = $databaseConnection->query($categoryQuery);
+
+	//If no results then stop
+	if($categoryResult == false){
+		return "No results for '".$catId."'";
 	}
 
 	//Loop through results and add each row to array
@@ -183,6 +183,44 @@ function getSaleItem( $itemId )
 	$output = array();
 	while($row = $sale_itemResult->fetch_assoc()){
 		array_push($output, $row);
+	}
+	
+	//format output
+	return json_encode($output);
+}
+
+//This function will return all items associated with a keyword when supplied with a keyword
+function getItemsByCategory( $catId )
+{
+	//query creation
+	$itemQuery = "SELECT * FROM Item NATURAL JOIN Sale_Item NATURAL JOIN Categorized WHERE pcid = '".$catId."'";
+
+	//query database
+	$databaseConnection = GetDatabaseConnection();
+	$itemResult = $databaseConnection->query($itemQuery);
+
+	if($itemResult != false)
+	{
+		//Loop through results and add each row to array
+		$output = array();
+		while($row = $itemResult->fetch_assoc()){
+			array_push($output, $row);
+		}
+	}
+
+	//query creation
+	$itemQuery = "SELECT * FROM Item NATURAL JOIN Auction_Item NATURAL JOIN Categorized WHERE pcid = '".$catId."'";
+
+	//query database
+	$databaseConnection = GetDatabaseConnection();
+	$itemResult = $databaseConnection->query($itemQuery);
+
+	if($itemResult != false)
+	{
+		//Loop through results and add each row to array
+		while($row = $itemResult->fetch_assoc()){
+			array_push($output, $row);
+		}
 	}
 	
 	//format output
