@@ -5,6 +5,7 @@ function GetDatabaseConnection()
 //Post: A database connection has been created and returned
 {
     $databaseConnection = new mysqli("localhost", "root", "", "431w_proj");
+    mysqli_set_charset($databaseConnection,"utf8");
     
     if ($databaseConnection->connect_error)
     {
@@ -42,7 +43,7 @@ function getAddressesByUser( $userName )
 function getAuctionItem( $itemId )
 {
 	//query creation
-	$auc_itemQuery = "SELECT * FROM Auction_Item A WHERE A.iid LIKE '".$itemId."'";
+	$auc_itemQuery = "SELECT * FROM Auction_Item NATURAL JOIN Item WHERE iid LIKE '".$itemId."'";
 
 	//query database
 	$databaseConnection = GetDatabaseConnection();
@@ -59,6 +60,30 @@ function getAuctionItem( $itemId )
 		array_push($output, $row);
 	}
 
+	//format output
+	return json_encode($output);
+}
+
+function getChildrenCategories( $catId )
+{
+	//query creation
+	$categoryQuery = "SELECT * FROM Category C1 NATURAL JOIN Connected_To, Category C2 WHERE mcid = C2.cid AND C1.cid = '".$catId."'";
+
+	//query database
+	$databaseConnection = GetDatabaseConnection();
+	$categoryResult = $databaseConnection->query($categoryQuery);
+
+	//If no results then stop
+	if($categoryResult == false){
+		return "No results for '".$catId."'";
+	}
+
+	//Loop through results and add each row to array
+	$output = array();
+	while($row = $categoryResult->fetch_assoc()){
+		array_push($output, $row);
+	}
+	
 	//format output
 	return json_encode($output);
 }
@@ -142,12 +167,13 @@ function getPhoneNumberByUser( $userName )
 function getSaleItem( $itemId )
 {
 	//query creation
-	$sale_itemQuery = "SELECT * FROM Sale_Item S WHERE S.iid LIKE '".$itemId."'";
+	$sale_itemQuery = "SELECT * FROM Sale_Item NATURAL JOIN Item WHERE iid LIKE '".$itemId."'";
 
 	//query database
 	$databaseConnection = GetDatabaseConnection();
 	$sale_itemResult = $databaseConnection->query($sale_itemQuery);
-	
+
+
 	//If no results then stop
 	if($sale_itemResult == false){
 		return "No results for '".$itemId."'";
