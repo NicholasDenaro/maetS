@@ -454,4 +454,33 @@ function getWishedByUser( $userName )
 	return json_encode($output);
 }
 
+function login($user, $pass)
+{
+	//query creation
+	//Use "LIKE" because then we can pattern match.
+	$userQuery = "SELECT * FROM Usr U WHERE U.username = '" . $user . "' AND U.upassword = '" . $pass . "';";
+
+	//query database
+	$databaseConnection = GetDatabaseConnection();
+	$userResult = $databaseConnection->query($userQuery);
+
+	//If there are not results then stop.
+	if($userResult === false)
+	{
+		echo "no users found!";
+		return null;
+	}
+
+	//Loop through the results and add each row to an array.
+	$output = array();
+	while($row = $userResult->fetch_assoc())
+	{
+		array_push($output, $row);
+	}
+
+	//format output
+	//return json_encode($output);
+	return $output;
+}
+
 ?>
