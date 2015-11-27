@@ -1,22 +1,20 @@
-function initItems()
+function initItems(catId)
 {
-	var id = getParameterFromURL();
-
-	var URL="";
-	if(id[0] == null)
+	if(catId == null)
 	{
 		URL = "../../backend/api/SaleItem.php?itemId=%";
 	}
-	else if(id[0] == "catId")
+	else
 	{
-		URL = "../../backend/api/Categorized.php?catId="+id[1];
+		URL = "../../backend/api/Categorized.php?catId="+catId;
 	}
+
 	$.ajax({
 		url: URL,
 		success: function(data)
 		{
 			processItemResponse(data);
-			if(id[0]==null)
+			if(catId == null)
 			{
 				var URL = "../../backend/api/AuctionItem.php?itemId=%";
 				$.ajax({
@@ -37,6 +35,17 @@ function initItems()
 			console.log("Error on ajax call...\n" + xhr.status + "\n" + thrownError + "\nURL: " + URL);
 		}
 	});
+}
+
+function clearItems()
+{
+	var displayCase = document.getElementById("display-case");
+	var child = displayCase.firstChild;
+	while(child!=null)
+	{
+		displayCase.removeChild(child);
+		child = displayCase.firstChild;
+	}
 }
 
 function getParameterFromURL()

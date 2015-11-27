@@ -31,7 +31,7 @@ function createCategory(cat)
 {
 	var name = document.createElement("a");
 	name.className = "list-group-item";
-	name.href="./?catId="+cat.cid;
+	name.href="javascript:clearItems();initItems('"+cat.cid+"');";//"./?catId="+cat.cid;
 	name.innerHTML = cat.cname;
 
 	return name;
