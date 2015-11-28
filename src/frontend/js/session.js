@@ -45,7 +45,9 @@ function submitLogin()
                 var divs = document.getElementsByClassName("modal-backdrop");
                 for(var i = divs.length - 1; i >= 0; i--)
                         divs[i].parentNode.removeChild(divs[i]);*/
-                var params = window.location.href.substring(window.location.href.lastIndexOf("?"));
+                var params="";
+                if(window.location.href.lastIndexOf("?") != -1)
+                    params = window.location.href.substring(window.location.href.lastIndexOf("?"));
                 window.location.href="./"+params;
             }
         }
@@ -58,7 +60,9 @@ function submitLogout()
         url: "../../backend/api/Login.php?logout",
         success: function(data)
         {
-            var params = window.location.href.substring(window.location.href.lastIndexOf("?"));
+            var params="";
+                if(window.location.href.lastIndexOf("?") != -1)
+                    params = window.location.href.substring(window.location.href.lastIndexOf("?"));
             window.location.href="./"+params;
         }
     });
