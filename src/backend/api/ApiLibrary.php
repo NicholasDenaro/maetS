@@ -252,6 +252,37 @@ function getItemsByKeyword( $keyword )
 	return json_encode($output);
 }
 
+//This function will return all items associated with a keyword when supplied with a keyword
+function getItemsByUser( $username )
+{
+	//query creation
+	$itemQuery = "SELECT * FROM Usr U, Item I natural join Sale_Item WHERE U.username = I.seller AND username = '".$username."'";
+
+	//query database
+	$databaseConnection = GetDatabaseConnection();
+	$itemResult = $databaseConnection->query($itemQuery);
+
+	//Loop through results and add each row to array
+	$output = array();
+	while($row = $itemResult->fetch_assoc()){
+		array_push($output, $row);
+	}
+
+	$itemQuery = "SELECT * FROM Usr U, Item I natural join Auction_Item WHERE U.username = I.seller AND username = '".$username."'";
+
+	//query database
+	$databaseConnection = GetDatabaseConnection();
+	$itemResult = $databaseConnection->query($itemQuery);
+
+	//Loop through results and add each row to array
+	while($row = $itemResult->fetch_assoc()){
+		array_push($output, $row);
+	}
+	
+	//format output
+	return json_encode($output);
+}
+
 //This function will return the shop information of a user when supplied with a user name
 function getShopByUser( $userName )
 {

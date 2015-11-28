@@ -21,6 +21,20 @@ if(isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === 'GET')
 		return;
 	}
 
+	if(isset($_GET['check']))
+	{
+		if($_SESSION['username'] != null)
+		{
+			echo json_encode(array("success"=>true,"user"=>$_SESSION['username']));
+		}
+		else
+		{
+			echo json_encode(array("error"=>"not logged in."));
+		}
+
+		return;
+	}
+
 	//This checks to see if anything was passed into the parameter userName
 	if (!isset($_GET['user'])||!isset($_GET['pass']))
 	{

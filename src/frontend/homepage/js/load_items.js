@@ -88,7 +88,7 @@ function createItemDisplay(item)
 		img.src = "../images/" + item.img;
 	else
 		img.src="../images/na.jpg";
-	img.style="width: auto; height: 150px;"
+	img.style = "width: auto; height: 150px;";
 	thumb.appendChild(img);
 
 	var capt = document.createElement("div");
