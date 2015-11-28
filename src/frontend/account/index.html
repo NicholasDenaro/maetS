@@ -9,16 +9,38 @@
     <link href="css/layout.css" rel="stylesheet">
 </head>
 
-<body onload="init();">
-<div class="container">
-      <div class="row">
-      <div class="col-md-5  toppad  pull-right col-md-offset-3 ">
-           <A href="edit.html" >Edit Profile</A>
+<body onload="checkIfLoggedIn();init();">
 
-        <A href="edit.html" >Logout</A>
+<!-- Navigation -->
+    <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+        <div class="container">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="../homepage/">maetS</a>
+            </div>
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                <ul id="navbar-buttons" class="nav navbar-nav">
+                </ul>
+            </div>
+            <!-- /.navbar-collapse -->
+        </div>
+        <!-- /.container -->
+    </nav>
+
+  <div class="container">
+      <div class="row">
+      <!--<div class="col-md-5  toppad  pull-right col-md-offset-3 ">
+           <A href="edit.html" >Edit Profile</A>
        <br>
-<p class=" text-info">May 05,2014,03:00 pm </p>
-      </div>
+  <p class=" text-info">May 05,2014,03:00 pm </p>
+      </div>-->
         <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 col-xs-offset-0 col-sm-offset-0 col-md-offset-3 col-lg-offset-3 toppad" >
    
    
@@ -74,8 +96,8 @@
                     </tbody>
                   </table>
                   
-                  <a href="#" class="btn btn-primary">My Sales Performance</a>
-                  <a href="#" class="btn btn-primary">Team Sales Performance</a>
+                  <a href="#" class="btn btn-primary">My Listings</a>
+                  <a href="#" class="btn btn-primary">My Shop</a>
                 </div>
               </div>
             </div>
@@ -101,6 +123,8 @@
     <script src="js/func.js"></script>
 
     <script src="js/load_account.js"></script>
+
+    <script src="../js/session.js"></script>
 </body>
 
 </html>

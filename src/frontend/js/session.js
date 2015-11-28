@@ -38,13 +38,6 @@ function submitLogin()
             }
             else
             {
-                /*var modal = document.getElementById("login-modal");
-                modal.parentNode.removeChild(modal);
-                var loginButton = document.getElementById("login-button");
-                loginButton.parentNode.removeChild(loginButton);
-                var divs = document.getElementsByClassName("modal-backdrop");
-                for(var i = divs.length - 1; i >= 0; i--)
-                        divs[i].parentNode.removeChild(divs[i]);*/
                 var params="";
                 if(window.location.href.lastIndexOf("?") != -1)
                     params = window.location.href.substring(window.location.href.lastIndexOf("?"));
