@@ -1,6 +1,5 @@
 function init()
 {
-	alert("init");
 	var URL = "../../backend/api/User.php";
 	$.ajax({
 		url: URL,
@@ -18,74 +17,64 @@ function init()
 function processResponse(data)
 {
 	data = JSON.parse(data);
-	alert(JSON.stringify(data," "," "));
-	for(var i = 0; i < data.length; i++)
+	data = data[0];
+	if(data == undefined)
 	{
-		var item = data[i];
-		var div = createItemDisplay(item);
+		window.location.href = "../homepage/";
+	}
+	else
+	{
+		var name = document.getElementById("uname");
+		name.innerHTML = data["uname"];
 
-		var itemDisplay = document.getElementById("item-display");
-		itemDisplay.insertBefore(div,itemDisplay.firstChild);
+		var username = document.getElementById("username");
+		username.innerHTML = data["username"];
+
+		var dob = document.getElementById("dob");
+		dob.innerHTML = data["dob"];
+
+		var gender = document.getElementById("gender");
+		gender.innerHTML = data["gender"];
+
+		var email = document.getElementById("email");
+		email.innerHTML = data["email"];
+		email.href = "mailto:" + data["email"];
+
+		$.ajax({
+			url: "../../backend/api/Address.php?userName=" + data["username"],
+			success: function(dat){
+				dat = JSON.parse(dat);
+				var address = document.getElementById("address");
+				if(dat.length == 0)
+					return;
+				address.innerHTML = dat[0]["street"]+" "+dat[0]["city"]+", "+dat[0]["astate"]+" "+dat[0]["zip"]+" Apt #"+dat[0]["apt_number"];
+
+				for(var i = 1; i < dat.length; i++)
+				{
+					address.innerHTML+="<br>"+dat[i]["street"]+" "+dat[i]["city"]+", "+dat[i]["astate"]+" "+dat[i]["zip"]+" Apt #"+dat[i]["apt_number"];
+				}
+			}
+		});
+
+		$.ajax({
+			url: "../../backend/api/Phone.php?userName=" + data["username"],
+			success: function(dat){
+				dat = JSON.parse(dat);
+				if(dat.length == 0)
+					return;
+				var phone = document.getElementById("phone");
+				phone.innerHTML = formatPhone(dat[0]["number"]);
+
+				for(var i = 1; i < dat.length; i++)
+				{
+					phone.innerHTML+="<br>"+formatPhone(dat[i]["number"]);
+				}
+			}
+		});
 	}
 }
 
-function createItemDisplay(item)
+function formatPhone(phone)
 {
-	var thumb = document.createElement("div");
-	thumb.className = "thumbnail";
-
-	var img = document.createElement("img");
-	img.alt = "";
-	img.className="img-responsive"
-	if(item.img != null)
-		img.src = "../images/" + item.img;
-	else
-		img.src="../images/na.jpg";
-	img.style="width: auto; height: 300px;"
-	thumb.appendChild(img);
-
-	var capt = document.createElement("div");
-	capt.className ="caption";
-	thumb.appendChild(capt);
-
-	var price = document.createElement("h4");
-	price.className = "pull-right";
-	if(item.price != undefined)
-	{
-		price.innerHTML = "$" + item.price;
-	}
-	else
-	{
-		price.innerHTML = "$" + item.min_price;
-	}
-	capt.appendChild(price);
-
-	var nameheader = document.createElement("h4");
-	var name = document.createElement("a");
-	name.href="../item/?iid="+item.iid;
-	name.innerHTML = item.iid;
-	capt.appendChild(nameheader);
-	nameheader.appendChild(name);
-
-	var desc = document.createElement("p");
-	desc.innerHTML = item.descr;
-	capt.appendChild(desc);
-
-	var ratingHolder = document.createElement("div");
-	ratingHolder.className = "ratings";
-	thumb.appendChild(ratingHolder);
-
-	var ratingCount = document.createElement("p");
-	ratingCount.className = "pull-right";
-	ratingCount.innerHTML = "X"+" reviews";
-	ratingHolder.appendChild(ratingCount);
-
-	var starHolder = document.createElement("p");
-	ratingHolder.appendChild(starHolder);
-
-	var star = document.createElement("span");
-	star.className = "glyphicon glyphicon-star";
-	starHolder.appendChild(star);
-
-	return thumb;
+	return phone[0] + " (" + phone.substring(1,4) + ")" + phone.substring(4,7) + "-" + phone.substring(7);
 }
