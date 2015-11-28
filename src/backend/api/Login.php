@@ -30,7 +30,7 @@ if(isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === 'GET')
 	{
 		if(isset($_SESSION))
 		{
-			if($_SESSION['username'] != null)
+			if(isset($_SESSION['username']) && $_SESSION['username'] != null)
 			{
 				echo json_encode(array("error"=>"Can't log in twice", "user"=>$_SESSION["username"]));
 				return;
