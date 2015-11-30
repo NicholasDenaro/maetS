@@ -1,6 +1,146 @@
 <?php
 //This file will contain all of the code for the API calls
 
+function addAuctionItem($name, $descr, $loc, $seller, $img, $price)
+{
+	$databaseConnection = GetDatabaseConnection();
+
+	$iid = substr(uniqid('', true), 0, 20);
+
+	$result = $databaseConnection->query("select count(*) from item where iid='".$iid."';");
+
+	while($result->fetch_assoc()["count(*)"] != '0')
+	{
+		$iid = substr(uniqid('', true), 0, 20);
+
+		$result = $databaseConnection->query("select count(*) from item where iid='".$iid."';");
+	}
+
+	//query creation
+	$itemQuery = sprintf("insert INTO item (`iid`, `name`, `descr`, `location`, `seller`, `img`) VALUES ('%s','%s','%s','%s','%s','%s');",$iid,$name,$descr,$loc,$seller,$img);
+	//query database
+	$databaseConnection = GetDatabaseConnection();
+	$itemResult = $databaseConnection->query($itemQuery);
+
+	if($itemResult)
+	{
+		//query creation
+		$itemQuery = sprintf("insert INTO auction_item (`iid`, `min_price`) VALUES ('%s','%s');",$iid,$price);
+		//query database
+		$databaseConnection = GetDatabaseConnection();
+		$itemResult = $databaseConnection->query($itemQuery);
+		if($itemResult)
+		{
+			return json_encode(array("success"=>"true"));
+		}
+		else
+		{
+			//query creation
+			$itemQuery = sprintf("delete from item where iid='%s';",$iid);
+			//query database
+			$databaseConnection = GetDatabaseConnection();
+			$itemResult = $databaseConnection->query($itemQuery);
+			if($itemResult)
+			{
+				return json_encode(array("error"=>"failed to insert item in auction_item."));
+			}
+			else
+			{
+				return json_encode(array("success"=>"false","error"=>"failed to succeed. =("));
+			}
+		}
+	}
+	else
+	{
+		return json_encode(array("error"=>"failed to insert"));
+	}
+}
+
+function addSaleItem($name, $descr, $loc, $seller, $img, $price)
+{
+	$databaseConnection = GetDatabaseConnection();
+
+	$iid = substr(uniqid('', true), 0, 20);
+
+	$result = $databaseConnection->query("select count(*) from item where iid='".$iid."';");
+
+	while($result->fetch_assoc()["count(*)"] != '0')
+	{
+		$iid = substr(uniqid('', true), 0, 20);
+
+		$result = $databaseConnection->query("select count(*) from item where iid='".$iid."';");
+	}
+
+	//query creation
+	$itemQuery = sprintf("insert INTO item (`iid`, `name`, `descr`, `location`, `seller`, `img`) VALUES ('%s','%s','%s','%s','%s','%s');",$iid,$name,$descr,$loc,$seller,$img);
+	//query database
+	$databaseConnection = GetDatabaseConnection();
+	$itemResult = $databaseConnection->query($itemQuery);
+
+	if($itemResult)
+	{
+		//query creation
+		$itemQuery = sprintf("insert INTO sale_item (`iid`, `price`) VALUES ('%s','%s');",$iid,$price);
+		//query database
+		$databaseConnection = GetDatabaseConnection();
+		$itemResult = $databaseConnection->query($itemQuery);
+		if($itemResult)
+		{
+			return json_encode(array("success"=>"true"));
+		}
+		else
+		{
+			//query creation
+			$itemQuery = sprintf("delete from item where iid='%s';",$iid);
+			//query database
+			$databaseConnection = GetDatabaseConnection();
+			$itemResult = $databaseConnection->query($itemQuery);
+			if($itemResult)
+			{
+				return json_encode(array("error"=>"failed to insert item in sale_item."));
+			}
+			else
+			{
+				return json_encode(array("success"=>"false","error"=>"failed to succeed. =("));
+			}
+		}
+	}
+	else
+	{
+		return json_encode(array("error"=>"failed to insert"));
+	}
+}
+
+function addUser($username, $password, $name, $income, $gender, $dob, $email, $phone_number, $credit_card, $address)
+{
+	$databaseConnection = GetDatabaseConnection();
+
+	$result = $databaseConnection->query("select count(*) from user where username='".$username."';");
+
+	if($result->fetch_assoc()["count(*)"] != '0')
+	{
+		return(json_encode(array("error"=>"username already taken.")));
+	}
+
+	//query creation
+	$userQuery = sprintf("insert INTO user (`username`, `upassword`, `uname`, `income`, `gender`, `dob`, `email`) VALUES ('%s','%s','%s','%s','%s','%s','%s');",$username, $password, $name, $income, $gender, $dob, $email);
+	//query database
+	$databaseConnection = GetDatabaseConnection();
+	$userResult = $databaseConnection->query($userQuery);
+
+	//http://localhost/431w/backend/api/AddUser.php?username=test&password=test&name=tester&income=9001&gender=T&dob=1111-01-01&email=test&phone_number=234234&credit_card=23423&address=buttsville
+	if($userResult)
+	{
+		//TODO: handle phone, cc, addr
+		return json_encode(array("success"=>"true"));
+	}
+	else
+	{
+
+		return json_encode(array("error"=>$databaseConnection->error));
+	}
+}
+
 function GetDatabaseConnection()
 //Post: A database connection has been created and returned
 {
@@ -256,7 +396,7 @@ function getItemsByKeyword( $keyword )
 function getItemsByUser( $username )
 {
 	//query creation
-	$itemQuery = "SELECT * FROM Usr U, Item I natural join Sale_Item WHERE U.username = I.seller AND username = '".$username."'";
+	$itemQuery = "SELECT * FROM user U, Item I natural join Sale_Item WHERE U.username = I.seller AND username = '".$username."'";
 
 	//query database
 	$databaseConnection = GetDatabaseConnection();
@@ -268,7 +408,7 @@ function getItemsByUser( $username )
 		array_push($output, $row);
 	}
 
-	$itemQuery = "SELECT * FROM Usr U, Item I natural join Auction_Item WHERE U.username = I.seller AND username = '".$username."'";
+	$itemQuery = "SELECT * FROM user U, Item I natural join Auction_Item WHERE U.username = I.seller AND username = '".$username."'";
 
 	//query database
 	$databaseConnection = GetDatabaseConnection();
@@ -387,7 +527,7 @@ function getUser( $userName )
 {
 	//query creation
 	//Use "LIKE" because then we can pattern match.
-	$userQuery = "SELECT * FROM Usr U WHERE U.username LIKE '" . $userName . "'";
+	$userQuery = "SELECT * FROM user U WHERE U.username LIKE '" . $userName . "'";
 
 	//query database
 	$databaseConnection = GetDatabaseConnection();
@@ -489,7 +629,7 @@ function login($user, $pass)
 {
 	//query creation
 	//Use "LIKE" because then we can pattern match.
-	$userQuery = "SELECT * FROM Usr U WHERE U.username = '" . $user . "' AND U.upassword = '" . $pass . "';";
+	$userQuery = "SELECT * FROM user U WHERE U.username = '" . $user . "' AND U.upassword = '" . $pass . "';";
 
 	//query database
 	$databaseConnection = GetDatabaseConnection();
