@@ -1,6 +1,23 @@
 <?php
 //This file will contain all of the code for the API calls
 
+function getUniqid($table,$idname)
+{
+	$databaseConnection = GetDatabaseConnection();
+	$id = substr(uniqid('', true), 0, 20);
+
+	$result = $databaseConnection->query(sprintf("select * from %s where %s='%s';",$table,$idname,$id));
+
+	while($result->num_rows != 0)
+	{
+		$id = substr(uniqid('', true), 0, 20);
+
+		$result = $databaseConnection->query(sprintf("select * from %s where %s='%s';",$table,$idname,$id));
+	}
+
+	return $id;
+}
+
 function addAuctionItem($name, $descr, $loc, $seller, $img, $price)
 {
 	$databaseConnection = GetDatabaseConnection();
@@ -31,7 +48,7 @@ function addAuctionItem($name, $descr, $loc, $seller, $img, $price)
 		$itemResult = $databaseConnection->query($itemQuery);
 		if($itemResult)
 		{
-			return json_encode(array("success"=>"true"));
+			return json_encode(array("success"=>"true","iid"=>$iid));
 		}
 		else
 		{
@@ -53,6 +70,88 @@ function addAuctionItem($name, $descr, $loc, $seller, $img, $price)
 	else
 	{
 		return json_encode(array("error"=>"failed to insert"));
+	}
+}
+
+function addCategoryToItem($iid, $category)
+{
+	if($category == null)
+		$category = 0;
+	//query creation
+	$itemQuery = sprintf("insert INTO Categorized (`iid`, `cid`) VALUES ('%s','%s');",$iid,$category);
+	//query database
+	$databaseConnection = GetDatabaseConnection();
+	$itemResult = $databaseConnection->query($itemQuery);
+	if($itemResult)
+	{
+		return json_encode(array("success"=>"true"));
+	}
+}
+
+function addItemToWishlist($username, $iid)
+{
+	//query creation
+	$wishlistQuery = sprintf("select * from wishes_for where username='%s';",$username);
+	//query database
+	$databaseConnection = GetDatabaseConnection();
+	$wishlistResult = $databaseConnection->query($wishlistQuery);
+	if($wishlistResult->num_rows == 0)
+	{
+		$wid = getUniqid("wishes_for","wid");
+		$wishlistQuery = sprintf("insert into wishes_for (`wid`,`username`) VALUES ('%s','%s');",$wid, $username);
+		//query database
+		$databaseConnection = GetDatabaseConnection();
+		$wishlistResult = $databaseConnection->query($wishlistQuery);
+	}
+	else
+	{
+		$wid = $wishlistResult->fetch_assoc()["wid"];
+	}
+
+	//query creation
+	$itemQuery = sprintf("insert INTO filled_with (`wid`, `iid`) VALUES ('%s','%s');",$wid,$iid);
+	//query database
+	$databaseConnection = GetDatabaseConnection();
+	$itemResult = $databaseConnection->query($itemQuery);
+	if($itemResult)
+	{
+		return json_encode(array("success"=>"true"));
+	}
+	else
+	{
+		echo $databaseConnection->error;
+	}
+}
+
+function addKeywordsToItem($iid, $keywords)
+{
+	if($keywords == null)
+		return;
+
+	$keywords = json_decode($keywords);
+
+	//query creation
+	$itemQuery = sprintf("insert INTO search_key (`iid`, `word`) VALUES ('%s','%s')", $iid, $keywords[0]);
+
+	for($i = 1; $i < count($keywords); $i++)
+	{
+		$itemQuery .= sprintf(", ('%s','%s')",$iid,$keywords[$i]);
+	}
+
+	$itemQuery.=";";
+
+	//query database
+	$databaseConnection = GetDatabaseConnection();
+	$itemResult = $databaseConnection->query($itemQuery);
+
+
+	if($itemResult)
+	{
+		return json_encode(array("success"=>"true"));
+	}
+	else
+	{
+		echo $databaseConnection->error;
 	}
 }
 
@@ -86,7 +185,7 @@ function addSaleItem($name, $descr, $loc, $seller, $img, $price)
 		$itemResult = $databaseConnection->query($itemQuery);
 		if($itemResult)
 		{
-			return json_encode(array("success"=>"true"));
+			return json_encode(array("success"=>"true","iid"=>$iid));
 		}
 		else
 		{
@@ -128,10 +227,33 @@ function addUser($username, $password, $name, $income, $gender, $dob, $email, $p
 	$databaseConnection = GetDatabaseConnection();
 	$userResult = $databaseConnection->query($userQuery);
 
-	//http://localhost/431w/backend/api/AddUser.php?username=test&password=test&name=tester&income=9001&gender=T&dob=1111-01-01&email=test&phone_number=234234&credit_card=23423&address=buttsville
+	//http://localhost/431w/backend/api/AddUser.php?username=test&password=test&name=tester&income=9001&gender=T&dob=1111-01-01&email=test&phone_number=234234&credit_card=23423&address=[{%22street%22:%22road%22,%22city%22:%22testcity%22,%22state%22:%22ST%22,%22zip%22:%2212345%22,%22apt%22:%222%22}]
 	if($userResult)
 	{
-		//TODO: handle phone, cc, addr
+		$phones = json_decode($phone_number);
+		$creditCards = json_decode($credit_card);
+		$addresses = json_decode($address, true);
+
+		for($i = 0; $i < count($phones); $i++)
+		{
+			$phoneQuery = sprintf("insert into Cont_Phone (`username`,`number`) VALUES ('%s','%s');",$username,$phones[$i]);
+			$phoneResult = $databaseConnection->query($phoneQuery);
+		}
+
+		for($i = 0; $i < count($creditCards); $i++)
+		{
+			$card = $creditCards[$i];
+			$cardQuery = sprintf("insert into Cont_Phone (`username`,`cnumber`,`cname`,`ctype`,`expiration`) VALUES ('%s','%s','%s','%s','%s');",$username,$card["number"],$card["name"],$card["type"],$card["expire"]);
+			$cardResult = $databaseConnection->query($cardQuery);
+		}
+
+		for($i = 0; $i < count($addresses); $i++)
+		{
+			$address = $addresses[$i];
+			$addressQuery = sprintf("insert into loc_addresses (`username`,`street`,`city`,`astate`,`zip`,`apt_number`) VALUES ('%s','%s','%s','%s','%s','%s');",$username,$address["street"],$address["city"],$address["state"],$address["zip"],$address["apt"]);
+			$addressResult = $databaseConnection->query($addressQuery);
+		}
+
 		return json_encode(array("success"=>"true"));
 	}
 	else
@@ -604,21 +726,44 @@ function getSoldByUser( $userName )
 function getWishedByUser( $userName )
 {
 	//query creation
-	$wish_listQuery = "SELECT * FROM Whishes_For W WHERE W.username LIKE ".$userName."'";
+	$wish_listQuery = "SELECT * FROM wishes_for W NATURAL JOIN filled_with NATURAL JOIN item NATURAL JOIN sale_item WHERE W.username='".$userName."';";
 
 	//query database
 	$databaseConnection = GetDatabaseConnection();
 	$wish_listResult = $databaseConnection->query($wish_listQuery);
 	
 	//If no results then stop
-	if($wish_listResult == false){
-		return "No results for '".$userName."'";
-	}
+	/*if($wish_listResult == false){
+		return json_encode(array("error"=>"No results for '".$userName."'"));
+	}*/
 
-	//Loop through results and add each row to array
 	$output = array();
-	while($row = $wish_listResult->fetch_assoc()){
-		array_push($output, $row);
+
+	if($wish_listResult!=false)
+	{
+		//Loop through results and add each row to array
+		
+		while($row = $wish_listResult->fetch_assoc()){
+			array_push($output, $row);
+		}
+	}
+	$wish_listQuery = "SELECT * FROM wishes_for W NATURAL JOIN filled_with NATURAL JOIN item NATURAL JOIN auction_item WHERE W.username='".$userName."';";
+
+	//query database
+	$databaseConnection = GetDatabaseConnection();
+	$wish_listResult = $databaseConnection->query($wish_listQuery);
+	
+	//If no results then stop
+	/*if($wish_listResult == false){
+		return json_encode(array("error"=>"No results for '".$userName."'"));
+	}*/
+
+	if($wish_listResult!=false)
+	{
+		//Loop through results and add each row to array
+		while($row = $wish_listResult->fetch_assoc()){
+			array_push($output, $row);
+		}
 	}
 	
 	//format output

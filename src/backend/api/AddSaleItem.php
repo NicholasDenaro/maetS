@@ -19,7 +19,18 @@ if(isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === 'GET')
 		$_seller=($_GET['seller']);
 		$_img=($_GET['img']);
 		$_price=($_GET['price']);
-		echo addSaleItem($_name, $_descr, $_location, $_seller, $_img, $_price);
+		$_keywords=isset($_GET['keywords']) ? $_GET['keywords'] : null;
+		$_category=isset($_GET['category']) ? $_GET['category'] : null;
+		$result = addSaleItem($_name, $_descr, $_location, $_seller, $_img, $_price);
+		echo $result;
+
+		$res = json_decode($result, true);
+
+		if(isset($res["success"]) && $res["success"])
+		{
+			addKeywordsToItem($res["iid"], $_keywords);
+			addCategoryToItem($res["iid"], $_category);
+		}
 	}
 }
 
