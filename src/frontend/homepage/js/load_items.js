@@ -112,7 +112,10 @@ function createItemDisplay(item)
 	var nameheader = document.createElement("h4");
 	var name = document.createElement("a");
 	name.href="../item/?iid="+item.iid;
-	name.innerHTML = item.iid;
+	if(item.name == "")
+		name.innerHTML = "(Unnamed)";
+	else
+		name.innerHTML = item.name;
 	capt.appendChild(nameheader);
 	nameheader.appendChild(name);
 
@@ -120,7 +123,7 @@ function createItemDisplay(item)
 	desc.innerHTML = item.descr;
 	capt.appendChild(desc);
 
-	var ratingHolder = document.createElement("div");
+	/*var ratingHolder = document.createElement("div");
 	ratingHolder.className = "ratings";
 	thumb.appendChild(ratingHolder);
 
@@ -134,7 +137,7 @@ function createItemDisplay(item)
 
 	var star = document.createElement("span");
 	star.className = "glyphicon glyphicon-star";
-	starHolder.appendChild(star);
+	starHolder.appendChild(star);*/
 
 	return outer;
 }
