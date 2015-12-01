@@ -18,6 +18,43 @@ function getUniqid($table,$idname)
 	return $id;
 }
 
+function buildCategoryDescendants($catId)
+{
+	//query creation
+	$categoryQuery = "SELECT * FROM Connected_To;";
+
+	//query database
+	$databaseConnection = GetDatabaseConnection();
+	$categoryResult = $databaseConnection->query($categoryQuery);
+
+	//If no results then stop
+	if($categoryResult == false){
+		return null;
+	}
+
+	//Loop through results and add each row to array
+	$mappings = array();
+	while($row = $categoryResult->fetch_assoc())
+	{
+		if(!isset($mappings[$row["cid"]]))
+		{
+			$mappings[$row["cid"]] = array();
+		}
+
+		array_push($mappings[$row["cid"]], $row["ccid"]);
+	}
+
+	$categories = array($catId);
+
+	for($i = 0; $i < count($categories); $i++)
+	{
+		if(isset($mappings[$categories[$i]]))
+			$categories = array_merge($categories, $mappings[$categories[$i]]);
+	}
+
+	return $categories;
+}
+
 function addAuctionItem($name, $descr, $loc, $img, $price)
 {
 	$databaseConnection = GetDatabaseConnection();
@@ -86,6 +123,38 @@ function addCategoryToItem($iid, $category)
 	{
 		return json_encode(array("success"=>"true"));
 	}
+}
+
+function addItemToUserStocked($iid, $username)
+{
+	//query creation
+	$itemQuery = sprintf("insert INTO user_stocked (`iid`, `username`) VALUES ('%s','%s');",$iid,$username);
+	//query database
+	$databaseConnection = GetDatabaseConnection();
+	$itemResult = $databaseConnection->query($itemQuery);
+
+	if($itemResult == false)
+	{
+		return json_encode(array("error"=>"Failed to add to user stocked."));
+	}
+
+	return json_encode(array("success"=>true));
+}
+
+function addItemToSupplierStocked($iid, $username)
+{
+	//query creation
+	$itemQuery = sprintf("insert INTO supplier_stocked (`iid`, `supplier`) VALUES ('%s','%s');",$iid,$username);
+	//query database
+	$databaseConnection = GetDatabaseConnection();
+	$itemResult = $databaseConnection->query($itemQuery);
+
+	if($itemResult == false)
+	{
+		return json_encode(array("error"=>"Failed to add to supplier stocked."));
+	}
+
+	return json_encode(array("success"=>true));
 }
 
 function addItemToWishlist($username, $iid)
@@ -453,7 +522,31 @@ function getCategoryByItem( $itemId )
 function getChildrenCategories( $catId )
 {
 	//query creation
-	$categoryQuery = "SELECT * FROM Category C1 NATURAL JOIN Connected_To, Category C2 WHERE mcid = C2.cid AND C1.cid = '".$catId."'";
+	$categoryQuery = "SELECT * FROM Connected_To C1, Category C2 WHERE C1.ccid = C2.cid AND C1.cid = '".$catId."'";
+
+	//query database
+	$databaseConnection = GetDatabaseConnection();
+	$categoryResult = $databaseConnection->query($categoryQuery);
+
+	//If no results then stop
+	if($categoryResult == false){
+		return "No results for '".$catId."'";
+	}
+
+	//Loop through results and add each row to array
+	$output = array();
+	while($row = $categoryResult->fetch_assoc()){
+		array_push($output, $row);
+	}
+	
+	//format output
+	return json_encode($output);
+}
+
+function getParentCategory( $catId )
+{
+	//query creation
+	$categoryQuery = "SELECT * FROM Connected_To C1, Category C2 WHERE C1.cid = C2.cid AND C1.ccid = '".$catId."'";
 
 	//query database
 	$databaseConnection = GetDatabaseConnection();
@@ -553,8 +646,26 @@ function getSaleItem( $itemId )
 //This function will return all items associated with a keyword when supplied with a keyword
 function getItemsByCategory( $catId )
 {
+	$descendants = buildCategoryDescendants($catId);
 	//query creation
-	$itemQuery = "SELECT * FROM Item NATURAL JOIN Sale_Item NATURAL JOIN Categorized WHERE pcid = '".$catId."'";
+	$itemQuery = sprintf("SELECT * FROM user_stocked NATURAL JOIN Item NATURAL JOIN Sale_Item NATURAL JOIN Categorized WHERE cid in ('%s');", implode($descendants,'\',\''));
+
+	//query database
+	$databaseConnection = GetDatabaseConnection();
+	$itemResult = $databaseConnection->query($itemQuery);
+
+	$output = array();
+
+	if($itemResult != false)
+	{
+		//Loop through results and add each row to array
+		
+		while($row = $itemResult->fetch_assoc()){
+			array_push($output, $row);
+		}
+	}
+
+	$itemQuery = sprintf("SELECT * FROM supplier_stocked NATURAL JOIN Item NATURAL JOIN Sale_Item NATURAL JOIN Categorized WHERE cid in ('%s');", implode($descendants,'\',\''));
 
 	//query database
 	$databaseConnection = GetDatabaseConnection();
@@ -563,14 +674,13 @@ function getItemsByCategory( $catId )
 	if($itemResult != false)
 	{
 		//Loop through results and add each row to array
-		$output = array();
 		while($row = $itemResult->fetch_assoc()){
 			array_push($output, $row);
 		}
 	}
 
 	//query creation
-	$itemQuery = "SELECT * FROM Item NATURAL JOIN Auction_Item NATURAL JOIN Categorized WHERE pcid = '".$catId."'";
+	$itemQuery = sprintf("SELECT * FROM user_stocked NATURAL JOIN  Item NATURAL JOIN Auction_Item NATURAL JOIN Categorized WHERE cid in ('%s');", implode($descendants,'\',\''));
 
 	//query database
 	$databaseConnection = GetDatabaseConnection();
@@ -583,6 +693,22 @@ function getItemsByCategory( $catId )
 			array_push($output, $row);
 		}
 	}
+
+	//query creation
+	$itemQuery = sprintf("SELECT * FROM supplier_stocked NATURAL JOIN  Item NATURAL JOIN Auction_Item NATURAL JOIN Categorized WHERE cid in ('%s');", implode($descendants,'\',\''));
+
+	//query database
+	$databaseConnection = GetDatabaseConnection();
+	$itemResult = $databaseConnection->query($itemQuery);
+
+	if($itemResult != false)
+	{
+		//Loop through results and add each row to array
+		while($row = $itemResult->fetch_assoc()){
+			array_push($output, $row);
+		}
+	}
+
 	
 	//format output
 	return json_encode($output);

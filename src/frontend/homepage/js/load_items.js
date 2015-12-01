@@ -1,8 +1,9 @@
 function initItems(catId)
 {
+	var URL="";
 	if(catId == null)
 	{
-		URL = "../../backend/api/SaleItem.php?itemId=%";
+		URL = "../../backend/api/Categorized.php?catId="+0;
 	}
 	else
 	{
@@ -14,7 +15,7 @@ function initItems(catId)
 		success: function(data)
 		{
 			processItemResponse(data);
-			if(catId == null)
+			/*if(catId == null)
 			{
 				var URL = "../../backend/api/AuctionItem.php?itemId=%";
 				$.ajax({
@@ -28,7 +29,7 @@ function initItems(catId)
 						console.log("Error on ajax call...\n" + xhr.status + "\n" + thrownError + "\nURL: " + URL);
 					}
 				});
-			}
+			}*/
 		},
 		error: function(xhr, ajaxOptions, thrownError)
 		{
@@ -62,6 +63,7 @@ function getParameterFromURL()
 
 function processItemResponse(data)
 {
+	//console.log(data);
 	data = JSON.parse(data);
 	for(var i = 0; i < data.length; i++)
 	{

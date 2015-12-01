@@ -1,6 +1,7 @@
 <?php
 
 require_once("ApiLibrary.php");
+session_start();
 
 //Checks if this is running from a request
 if(isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === 'GET')
@@ -15,7 +16,7 @@ if(isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === 'GET')
 	{
 		if(!isset($_SESSION['username']) || $_SESSION['username']==null)
 		{
-			echo json_encode(array("error"=>"must be logged in to buy item."));
+			echo json_encode(array("error"=>"must be logged in to auction item."));
 			return;
 		}
 		$_seller = $_SESSION['username'];
@@ -23,22 +24,23 @@ if(isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === 'GET')
 		$_name=($_GET['name']);
 		$_descr=($_GET['descr']);
 		$_location=($_GET['location']);
-		$_seller=($_GET['seller']);
 		$_img=($_GET['img']);
 		$_price=($_GET['price']);
 		$_keywords=isset($_GET['keywords']) ? $_GET['keywords'] : null;
 		$_category=isset($_GET['category']) ? $_GET['category'] : null;
-		$result = addAuctionItem($_name, $_descr, $_location, $_seller, $_img, $_price);
+		$result = addAuctionItem($_name, $_descr, $_location, $_img, $_price);
 		echo $result;
 
 		$res = json_decode($result, true);
 		if(isset($_GET['supplier']))
 		{
 			//add to supplier_stocked
+			addItemToSupplierStocked($res["iid"], $_seller);
 		}
 		else
 		{
 			//addd to user_stocked
+			addItemToUserStocked($res["iid"], $_seller);
 		}
 
 		if(isset($res["success"]) && $res["success"])
