@@ -328,6 +328,40 @@ function addSupplier($company_name, $password, $poc, $phone_number, $address, $c
 	}
 }
 
+function bid($iid, $bidder, $value)
+{
+	$rows = 0;
+	//query creation
+	$auctionQuery = sprintf("UPDATE auction_item NATURAL JOIN user_stocked SET bid=bid+%s WHERE iid = '%s' AND username<>%s;",$value,$iid,$bidder);
+
+	//query database
+	$databaseConnection = GetDatabaseConnection();
+	$auctionResult = $databaseConnection->query($auctionQuery);
+
+	$rows += $databaseConnection->affected_rows;
+
+	$auction2Query = sprintf("UPDATE auction_item NATURAL JOIN supplier_stocked SET bid=bid+%s WHERE iid = '%s';",$value,$iid);
+
+	//query database
+	$databaseConnection = GetDatabaseConnection();
+	$auction2Result = $databaseConnection->query($auction2Query);
+
+	$rows += $databaseConnection->affected_rows;
+
+	if($auctionResult == false && $auction2Result == false)
+	{
+		return json_encode(array("error"=>"something happened? =("));
+	}
+
+	if($rows == 0)
+	{
+		return(json_encode(array("error"=>"failed to update bid. Item ID not found.")));
+	}
+
+
+	return json_encode(array("success"=>true));
+}
+
 function GetDatabaseConnection()
 //Post: A database connection has been created and returned
 {
