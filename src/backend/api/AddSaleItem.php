@@ -6,17 +6,23 @@ require_once("ApiLibrary.php");
 if(isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === 'GET')
 {
 	//This checks to see if anything was passed into the parameter userName
-	if (!isset($_GET['name'])||!isset($_GET['descr'])||!isset($_GET['location'])||!isset($_GET['seller'])||!isset($_GET['img'])||!isset($_GET['price']))
+	if (!isset($_GET['name'])||!isset($_GET['descr'])||!isset($_GET['location'])||!isset($_GET['img'])||!isset($_GET['price']))
 	{
 		//handle error
 		echo "error =(";
 	}
 	else
 	{
+		if(!isset($_SESSION['username']) || $_SESSION['username']==null)
+		{
+			echo json_encode(array("error"=>"must be logged in to buy item."));
+			return;
+		}
+		$_username = $_SESSION['username'];
+
 		$_name=($_GET['name']);
 		$_descr=($_GET['descr']);
 		$_location=($_GET['location']);
-		$_seller=($_GET['seller']);
 		$_img=($_GET['img']);
 		$_price=($_GET['price']);
 		$_keywords=isset($_GET['keywords']) ? $_GET['keywords'] : null;
@@ -25,6 +31,14 @@ if(isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === 'GET')
 		echo $result;
 
 		$res = json_decode($result, true);
+		if(isset($_GET['supplier']))
+		{
+			//add to supplier_stocked
+		}
+		else
+		{
+			//addd to user_stocked
+		}
 
 		if(isset($res["success"]) && $res["success"])
 		{

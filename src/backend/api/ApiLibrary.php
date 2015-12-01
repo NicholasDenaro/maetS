@@ -18,7 +18,7 @@ function getUniqid($table,$idname)
 	return $id;
 }
 
-function addAuctionItem($name, $descr, $loc, $seller, $img, $price)
+function addAuctionItem($name, $descr, $loc, $img, $price)
 {
 	$databaseConnection = GetDatabaseConnection();
 
@@ -34,7 +34,7 @@ function addAuctionItem($name, $descr, $loc, $seller, $img, $price)
 	}
 
 	//query creation
-	$itemQuery = sprintf("insert INTO item (`iid`, `name`, `descr`, `location`, `seller`, `img`) VALUES ('%s','%s','%s','%s','%s','%s');",$iid,$name,$descr,$loc,$seller,$img);
+	$itemQuery = sprintf("insert INTO item (`iid`, `name`, `descr`, `location`, `img`) VALUES ('%s','%s','%s','%s','%s');",$iid,$name,$descr,$loc,$img);
 	//query database
 	$databaseConnection = GetDatabaseConnection();
 	$itemResult = $databaseConnection->query($itemQuery);
@@ -155,7 +155,43 @@ function addKeywordsToItem($iid, $keywords)
 	}
 }
 
-function addSaleItem($name, $descr, $loc, $seller, $img, $price)
+function addRating($iid, $user, $rating, $comment)
+{
+	$userQuery = "SELECT * FROM user_stocked WHERE iid='".$iid."';";
+
+	$databaseConnection = GetDatabaseConnection();
+	$userResult = $databaseConnection->query($userQuery);
+
+	if($userResult->num_rows == 0)//supplier
+	{
+		$supplierQuery = sprintf("UPDATE supplier_Trans SET rating='%s', comment='%s' WHERE iid='%s' AND username='%s';",$rating,$comment,$iid, $user);
+		$supplierResult = $databaseConnection->query($supplierQuery);
+
+		if($supplierResult == false)
+		{
+			return json_encode(array("error"=>"failed to update rating."));
+		}
+	}
+	else//user
+	{
+		$transQuery = sprintf("UPDATE user_Transaction SET rating='%s', tcomment='%s' WHERE iid='%s' AND busername='%s';",$rating,$comment,$iid,$user);
+		$transResult = $databaseConnection->query($transQuery);
+
+		if($transResult == false)
+		{
+			return json_encode(array("error"=>"failed to update rating."));
+		}
+
+		if($databaseConnection->affected_rows == 0)
+		{
+			return json_encode(array("error"=>"STOP TRYING TO EDIT OTHER PEOPLE'S $#1+, YOU @\$\$HOLE."));
+		}
+	}
+
+	return json_encode(array("success"=>"true"));
+}
+
+function addSaleItem($name, $descr, $loc, $img, $price)
 {
 	$databaseConnection = GetDatabaseConnection();
 
@@ -171,7 +207,7 @@ function addSaleItem($name, $descr, $loc, $seller, $img, $price)
 	}
 
 	//query creation
-	$itemQuery = sprintf("insert INTO item (`iid`, `name`, `descr`, `location`, `seller`, `img`) VALUES ('%s','%s','%s','%s','%s','%s');",$iid,$name,$descr,$loc,$seller,$img);
+	$itemQuery = sprintf("insert INTO item (`iid`, `name`, `descr`, `location`, `img`) VALUES ('%s','%s','%s','%s','%s');",$iid,$name,$descr,$loc,$img);
 	//query database
 	$databaseConnection = GetDatabaseConnection();
 	$itemResult = $databaseConnection->query($itemQuery);
@@ -254,6 +290,35 @@ function addUser($username, $password, $name, $income, $gender, $dob, $email, $p
 			$addressResult = $databaseConnection->query($addressQuery);
 		}
 
+		return json_encode(array("success"=>"true"));
+	}
+	else
+	{
+
+		return json_encode(array("error"=>$databaseConnection->error));
+	}
+}
+
+function addSupplier($company_name, $password, $poc, $phone_number, $address, $category)
+{
+	$databaseConnection = GetDatabaseConnection();
+
+	$result = $databaseConnection->query("select count(*) from supplier where company_name='".$company_name."';");
+
+	if($result->fetch_assoc()["count(*)"] != '0')
+	{
+		return(json_encode(array("error"=>"Company name already taken.")));
+	}
+
+	//query creation
+	$userQuery = sprintf("insert INTO supplier (`company_name`, `password`, `poc`, `phone`, `address`, `category`) VALUES ('%s','%s','%s','%s','%s','%s');",$company_name, $password, $poc, $phone_number, $address, $category);
+	//query database
+	$databaseConnection = GetDatabaseConnection();
+	$userResult = $databaseConnection->query($userQuery);
+
+	//http://localhost/431w/backend/api/AddUser.php?username=test&password=test&name=tester&income=9001&gender=T&dob=1111-01-01&email=test&phone_number=234234&credit_card=23423&address=[{%22street%22:%22road%22,%22city%22:%22testcity%22,%22state%22:%22ST%22,%22zip%22:%2212345%22,%22apt%22:%222%22}]
+	if($userResult)
+	{
 		return json_encode(array("success"=>"true"));
 	}
 	else
@@ -797,6 +862,153 @@ function login($user, $pass)
 	//format output
 	//return json_encode($output);
 	return $output;
+}
+
+function transaction($iid, $buyer)
+{
+	$userQuery = "SELECT * FROM user_stocked WHERE iid='".$iid."';";
+
+	$databaseConnection = GetDatabaseConnection();
+	$userResult = $databaseConnection->query($userQuery);
+
+	if($userResult->num_rows == 0)
+	{
+		return transactionSupplier($iid, $buyer);
+	}
+	else
+	{
+		return transactionUser($iid, $buyer);
+	}
+}
+
+function transactionUser($iid, $buyer)
+{
+	//query creation
+	//Use "LIKE" because then we can pattern match.
+	$userQuery = "SELECT * FROM user_stocked NATURAL JOIN item I NATURAL JOIN sale_item WHERE I.iid = '" . $iid . "';";
+
+	//query database
+	$databaseConnection = GetDatabaseConnection();
+	$userResult = $databaseConnection->query($userQuery);
+
+	//Loop through the results and add each row to an array.
+	$output = array();
+	while($row = $userResult->fetch_assoc())
+	{
+		array_push($output, $row);
+	}
+
+	$userQuery = "SELECT * FROM user_stocked NATURAL JOIN item I NATURAL JOIN auction_item WHERE I.iid = '" . $iid . "';";
+
+	//query database
+	$databaseConnection = GetDatabaseConnection();
+	$userResult = $databaseConnection->query($userQuery);
+
+	//Loop through the results and add each row to an array.
+	while($row = $userResult->fetch_assoc())
+	{
+		array_push($output, $row);
+	}
+
+	if(count($output) == 0)
+	{
+		return json_encode(array("error"=>"item id not found"));
+	}
+
+	$item = $output[0];
+
+	$seller = $item["username"];
+	if(isset($item["min_price"]))//auction item
+	{
+		$price = $item["min_price"];	
+	}
+	else//sale item
+	{
+		$price = $item["price"];
+	}
+
+	$transQuery = sprintf("INSERT INTO User_Transaction (`cusername`,`busername`, `iid`,`utdate`) VALUES ('%s','%s','%s',now())",$seller,$buyer,$iid);
+	$transResult = $databaseConnection->query($transQuery);
+
+	if($transResult == false)
+	{
+		return json_encode(array("error"=>$databaseConnection->error));
+	}
+
+	$userQuery = "DELETE FROM user_stocked WHERE iid='".$iid."'";
+	$userResult = $databaseConnection->query($userQuery);
+
+	if($userResult == false)
+	{
+		return json_encode(array("error"=>$databaseConnection->error));
+	}
+
+	return json_encode(array("success"=>true));
+}
+
+function transactionSupplier($iid, $buyer)
+{
+	//query creation
+	//Use "LIKE" because then we can pattern match.
+	$supplierQuery = "SELECT * FROM supplier_stocked NATURAL JOIN item I NATURAL JOIN sale_item WHERE I.iid = '" . $iid . "';";
+
+	//query database
+	$databaseConnection = GetDatabaseConnection();
+	$supplierResult = $databaseConnection->query($supplierQuery);
+
+	//Loop through the results and add each row to an array.
+	$output = array();
+	while($row = $supplierResult->fetch_assoc())
+	{
+		array_push($output, $row);
+	}
+
+	$supplierQuery = "SELECT * FROM supplier_stocked NATURAL JOIN item I NATURAL JOIN auction_item WHERE I.iid = '" . $iid . "';";
+
+	//query database
+	$databaseConnection = GetDatabaseConnection();
+	$supplierResult = $databaseConnection->query($supplierQuery);
+
+	//Loop through the results and add each row to an array.
+	while($row = $supplierResult->fetch_assoc())
+	{
+		array_push($output, $row);
+	}
+
+	if(count($output) == 0)
+	{
+		return json_encode(array("error"=>"item id not found"));
+	}
+
+	$item = $output[0];
+
+	$seller = $item["supplier"];
+	if(isset($item["min_price"]))//auction item
+	{
+		$price = $item["min_price"];	
+	}
+	else//sale item
+	{
+		$price = $item["price"];
+	}
+
+	$transQuery = sprintf("INSERT INTO supplier_Trans (`supplier`,`username`, `iid`,`stdate`) VALUES ('%s','%s','%s',now())",$seller,$buyer,$iid);
+	$transResult = $databaseConnection->query($transQuery);
+
+	if($transResult == false)
+	{
+		return json_encode(array("error"=>$databaseConnection->error));
+	}
+
+	$userQuery = "DELETE FROM supplier_stocked WHERE iid='".$iid."'";
+	$userResult = $databaseConnection->query($userQuery);
+
+	if($userResult == false)
+	{
+		return json_encode(array("error"=>$databaseConnection->error));
+	}
+
+	return json_encode(array("success"=>true));
 }
 
 ?>
