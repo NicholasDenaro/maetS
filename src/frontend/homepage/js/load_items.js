@@ -15,21 +15,6 @@ function initItems(catId)
 		success: function(data)
 		{
 			processItemResponse(data);
-			/*if(catId == null)
-			{
-				var URL = "../../backend/api/AuctionItem.php?itemId=%";
-				$.ajax({
-					url: URL,
-					success: function(data)
-					{
-						processItemResponse(data);
-					},
-					error: function(xhr, ajaxOptions, thrownError)
-					{
-						console.log("Error on ajax call...\n" + xhr.status + "\n" + thrownError + "\nURL: " + URL);
-					}
-				});
-			}*/
 		},
 		error: function(xhr, ajaxOptions, thrownError)
 		{
@@ -49,7 +34,30 @@ function clearItems()
 	}
 }
 
-function getParameterFromURL()
+function search()
+{
+	var searchBar = document.getElementById("search-bar");
+	var displayCase = document.getElementById("category-list");
+
+	var searchValue = searchBar.value == "" ? ".*" : searchBar.value;
+
+	var URL = "../../backend/api/SearchItems.php?category="+displayCase.firstChild.cid+"&phrase="+searchValue;
+	$.ajax(
+	{
+		url: URL,
+		success: function(data)
+		{
+			clearItems();
+			processItemResponse(data);
+		},
+		error: function(xhr, ajaxOptions, thrownError)
+		{
+			console.log("Error on ajax call...\n" + xhr.status + "\n" + thrownError + "\nURL: " + URL);
+		}
+	});
+}
+
+/*function getParameterFromURL()
 {
 	var str = window.location.search;
 	str = str.substring(str.lastIndexOf("?") + 1);
@@ -59,7 +67,7 @@ function getParameterFromURL()
 		return pair;
 	}
 	return null;
-}
+}*/
 
 function processItemResponse(data)
 {

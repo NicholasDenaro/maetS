@@ -75,6 +75,7 @@ function addAccountOptions(username)
     +"</li>";
 }
 
+//http://bootsnipp.com/snippets/featured/clean-modal-login-form
 function addLoginOptions()
 {
     var nav = document.getElementById("navbar-buttons");

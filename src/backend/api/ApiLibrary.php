@@ -714,11 +714,11 @@ function getItemsByCategory( $catId )
 	return json_encode($output);
 }
 
-//This function will return all items associated with a keyword when supplied with a keyword
-function getItemsByKeyword( $keyword )
+//This function will return all items associated with keywords when supplied with keywords
+function getItemsByKeywords( $keywords )
 {
 	//query creation
-	$search_keyQuery = "SELECT * FROM Search_Key S WHERE S.word LIKE '".$keyword."'";
+	$search_keyQuery = "SELECT * FROM Search_Key S WHERE S.word REGEXP '".str_replace(" ","|",$keywords)."'";
 
 	//query database
 	$databaseConnection = GetDatabaseConnection();
@@ -726,7 +726,7 @@ function getItemsByKeyword( $keyword )
 
 	//If no results then stop
 	if($search_keyResult == false){
-		return "No results for '".$keyword."'";
+		return json_encode(array("error"=>"No results for '".$keywords."'"));
 	}
 
 	//Loop through results and add each row to array
@@ -737,6 +737,59 @@ function getItemsByKeyword( $keyword )
 	
 	//format output
 	return json_encode($output);
+}
+
+function getItemsByName($names)
+{
+	//query creation
+	$search_keyQuery = "SELECT * FROM Item WHERE name REGEXP '".str_replace(" ","|",$names)."'";
+
+	//query database
+	$databaseConnection = GetDatabaseConnection();
+	$search_keyResult = $databaseConnection->query($search_keyQuery);
+
+	//If no results then stop
+	if($search_keyResult == false){
+		return json_encode(array("error"=>"No results for '".$names."'"));
+	}
+
+	//Loop through results and add each row to array
+	$output = array();
+	while($row = $search_keyResult->fetch_assoc()){
+		array_push($output, $row);
+	}
+	
+	//format output
+	return json_encode($output);
+}
+
+function isInObjectArray($keyName, $key, $array)
+{
+	for($i = 0; $i< count($array); $i++)
+	{
+		if($array[$i]->$keyName == $key)
+			return true;
+	}
+	return false;
+}
+
+function getItemsByCategoryAndPhrase($category, $phrase)
+{
+	$categoryResults = json_decode(getItemsByCategory($category));
+	$keywordResults = json_decode(getItemsByKeywords($phrase));
+	$nameResults = json_decode(getItemsByName($phrase));
+
+	$results = array();
+	for($i = 0; $i < count($categoryResults); $i++)
+	{
+		$iid = $categoryResults[$i]->iid;
+		if(isInObjectArray("iid", $iid, $keywordResults) || isInObjectArray("iid", $iid, $keywordResults))
+		{
+			array_push($results, $categoryResults[$i]);
+		}
+	}
+
+	return json_encode($results);
 }
 
 //This function will return all items associated with a keyword when supplied with a keyword

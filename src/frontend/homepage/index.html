@@ -47,7 +47,16 @@
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                 <ul id="navbar-buttons" class="nav navbar-nav">
                 </ul>
+                <div class="navbar-form pull-right">
+                    <div class="input-group">
+                      <input id="search-bar" type="text" class="form-control" placeholder="Search for..." onkeydown="if(event.keyCode==13)search();">
+                      <span class="input-group-btn">
+                        <button class="btn btn-default" type="button" onclick="search()">Go!</button>
+                      </span>
+                    </div><!-- /input-group -->
+                </div><!-- /.col-lg-6 -->
             </div>
+            
             <!-- /.navbar-collapse -->
         </div>
         <!-- /.container -->

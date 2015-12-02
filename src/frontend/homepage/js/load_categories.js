@@ -1,5 +1,8 @@
 function initCategories(catId)
 {
+	var searchBar = document.getElementById("search-bar");
+	searchBar.value="";
+
 	var URL = "../../backend/api/Categories.php?catId="+catId;
 	$.ajax({
 		url: URL,
