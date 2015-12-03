@@ -28,6 +28,18 @@ function init()
 	});
 }
 
+function getItemIdFromURL()
+{
+	var str = window.location.search;
+	str = str.substring(str.lastIndexOf("?") + 1);
+	var pair = str.split('=');
+	if(pair[0]=="iid")
+	{
+		return pair[1];
+	}
+	return -1;
+}
+
 function buyItem(iid)
 {
 
