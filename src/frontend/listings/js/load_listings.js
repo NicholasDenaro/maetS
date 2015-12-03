@@ -67,7 +67,7 @@ function createItemDisplay(item)
 
 	var img = document.createElement("img");
 	if(item.img != null)
-		img.src = "../images/" + item["img"];
+		img.src = item["img"];
 	else
 		img.src="../images/na.jpg";
 	img.style = "width: auto; height: 150px;";

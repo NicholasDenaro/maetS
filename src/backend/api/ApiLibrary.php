@@ -820,7 +820,7 @@ function getItemsByCategoryAndPhrase($category, $phrase)
 function getItemsByUser( $username )
 {
 	//query creation
-	$itemQuery = "SELECT * FROM user_stocked natural join Sale_Item WHERE username = '".$username."'";
+	$itemQuery = "SELECT * FROM user_stocked natural join item natural join Sale_Item WHERE username = '".$username."'";
 
 	//query database
 	$databaseConnection = GetDatabaseConnection();
@@ -835,7 +835,7 @@ function getItemsByUser( $username )
 		}
 	}
 
-	$itemQuery = "SELECT * FROM user_stocked natural join Auction_Item WHERE username = '".$username."'";
+	$itemQuery = "SELECT * FROM user_stocked natural join item natural join Auction_Item WHERE username = '".$username."'";
 
 	//query database
 	$databaseConnection = GetDatabaseConnection();
