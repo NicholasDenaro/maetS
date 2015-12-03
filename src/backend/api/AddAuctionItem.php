@@ -7,10 +7,10 @@ session_start();
 if(isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === 'GET')
 {
 	//This checks to see if anything was passed into the parameter userName
-	if (!isset($_GET['name'])||!isset($_GET['descr'])||!isset($_GET['location'])||!isset($_GET['img'])||!isset($_GET['price']))
+	if (!isset($_GET['name'])||!isset($_GET['descr'])||!isset($_GET['location'])||!isset($_GET['img'])||!isset($_GET['price'])||!isset($_GET['end_date']))
 	{
 		//handle error
-		echo "error =(";
+		echo json_encode(array("error"=>"missing parameter."));
 	}
 	else
 	{
@@ -26,9 +26,10 @@ if(isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === 'GET')
 		$_location=($_GET['location']);
 		$_img=($_GET['img']);
 		$_price=($_GET['price']);
+		$_end_date=($_GET['end_date']);
 		$_keywords=isset($_GET['keywords']) ? $_GET['keywords'] : null;
 		$_category=isset($_GET['category']) ? $_GET['category'] : null;
-		$result = addAuctionItem($_name, $_descr, $_location, $_img, $_price);
+		$result = addAuctionItem($_name, $_descr, $_location, $_img, $_price, $_end_date);
 		echo $result;
 
 		$res = json_decode($result, true);

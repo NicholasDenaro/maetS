@@ -55,7 +55,7 @@ function buildCategoryDescendants($catId)
 	return $categories;
 }
 
-function addAuctionItem($name, $descr, $loc, $img, $price)
+function addAuctionItem($name, $descr, $loc, $img, $price, $endDate)
 {
 	$databaseConnection = GetDatabaseConnection();
 
@@ -79,7 +79,7 @@ function addAuctionItem($name, $descr, $loc, $img, $price)
 	if($itemResult)
 	{
 		//query creation
-		$itemQuery = sprintf("insert INTO auction_item (`iid`, `min_price`) VALUES ('%s','%s');",$iid,$price);
+		$itemQuery = sprintf("insert INTO auction_item (`iid`, `min_price`, `end_date`) VALUES ('%s','%s','%s');",$iid,$price,$endDate);
 		//query database
 		$databaseConnection = GetDatabaseConnection();
 		$itemResult = $databaseConnection->query($itemQuery);
@@ -335,7 +335,7 @@ function addUser($username, $password, $name, $income, $gender, $dob, $email, $p
 	//http://localhost/431w/backend/api/AddUser.php?username=test&password=test&name=tester&income=9001&gender=T&dob=1111-01-01&email=test&phone_number=234234&credit_card=23423&address=[{%22street%22:%22road%22,%22city%22:%22testcity%22,%22state%22:%22ST%22,%22zip%22:%2212345%22,%22apt%22:%222%22}]
 	if($userResult)
 	{
-		$phones = json_decode($phone_number);
+		/*$phones = json_decode($phone_number);
 		$creditCards = json_decode($credit_card);
 		$addresses = json_decode($address, true);
 
@@ -357,7 +357,7 @@ function addUser($username, $password, $name, $income, $gender, $dob, $email, $p
 			$address = $addresses[$i];
 			$addressQuery = sprintf("insert into loc_addresses (`username`,`street`,`city`,`astate`,`zip`,`apt_number`) VALUES ('%s','%s','%s','%s','%s','%s');",$username,$address["street"],$address["city"],$address["state"],$address["zip"],$address["apt"]);
 			$addressResult = $databaseConnection->query($addressQuery);
-		}
+		}*/
 
 		return json_encode(array("success"=>"true"));
 	}
@@ -539,6 +539,30 @@ function getChildrenCategories( $catId )
 		array_push($output, $row);
 	}
 	
+	//format output
+	return json_encode($output);
+}
+
+function getCategoryById( $catId )
+{
+	//query creation
+	$categoryQuery = "SELECT * FROM Category WHERE cid LIKE '".$catId."'";
+
+	//query database
+	$databaseConnection = GetDatabaseConnection();
+	$categoryResult = $databaseConnection->query($categoryQuery);
+
+	//If no results then stop
+	if($categoryResult == false){
+		return "No results for '".$catId."'";
+	}
+
+	//Loop through results and add each row to array
+	$output = array();
+	while($row = $categoryResult->fetch_assoc()){
+		array_push($output, $row);
+	}
+
 	//format output
 	return json_encode($output);
 }
@@ -796,7 +820,7 @@ function getItemsByCategoryAndPhrase($category, $phrase)
 function getItemsByUser( $username )
 {
 	//query creation
-	$itemQuery = "SELECT * FROM user U, Item I natural join Sale_Item WHERE U.username = I.seller AND username = '".$username."'";
+	$itemQuery = "SELECT * FROM user_stocked natural join Sale_Item WHERE username = '".$username."'";
 
 	//query database
 	$databaseConnection = GetDatabaseConnection();
@@ -804,19 +828,25 @@ function getItemsByUser( $username )
 
 	//Loop through results and add each row to array
 	$output = array();
-	while($row = $itemResult->fetch_assoc()){
-		array_push($output, $row);
+	if($itemResult)
+	{
+		while($row = $itemResult->fetch_assoc()){
+			array_push($output, $row);
+		}
 	}
 
-	$itemQuery = "SELECT * FROM user U, Item I natural join Auction_Item WHERE U.username = I.seller AND username = '".$username."'";
+	$itemQuery = "SELECT * FROM user_stocked natural join Auction_Item WHERE username = '".$username."'";
 
 	//query database
 	$databaseConnection = GetDatabaseConnection();
 	$itemResult = $databaseConnection->query($itemQuery);
 
 	//Loop through results and add each row to array
-	while($row = $itemResult->fetch_assoc()){
-		array_push($output, $row);
+	if($itemResult)
+	{
+		while($row = $itemResult->fetch_assoc()){
+			array_push($output, $row);
+		}
 	}
 	
 	//format output

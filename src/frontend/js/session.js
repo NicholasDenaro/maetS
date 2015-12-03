@@ -24,6 +24,10 @@ function submitLogin()
 {
     var username = document.getElementById("login-username");
     var password = document.getElementById("login-password");
+    var type = document.getElementById("login-user");
+    var loginType="user"
+    if(!type.checked)
+        loginType="supplier"
     $.ajax({
         url: "../../backend/api/Login.php?user="+username.value+"&pass="+password.value,
         success: function(data)
@@ -92,6 +96,8 @@ function addLoginOptions()
                 +"<form>"
                 +"    <input id='login-username' type='text' name='user' placeholder='Username'>"
                 +"    <input id='login-password' type='password' name='pass' placeholder='Password'>"
+                +"    <input id='login-user' type='radio' name='sex' value='User' checked='true'>User</input>"
+                +"    <input type='radio' name='sex' value='Supplier'>Supplier</input>"
                 +"    <input type='submit' name='login' class='login loginmodal-submit' value='Login' onclick='submitLogin();return false;'>"
                 +"</form>"
 
@@ -101,7 +107,7 @@ function addLoginOptions()
                 +"</div>"
 
                 +"<div class='login-help'>"
-                    +"<a href='../register'>Register</a> - <a href='#'>Forgot Password</a>"
+                    +"<a href='../registeruser'>Register User</a> - <a href='../registersupplier'>Register Supplier</a>"
                 +"</div>"
             +"</div>"
         +"</div>"

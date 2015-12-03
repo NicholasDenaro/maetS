@@ -95,7 +95,7 @@ function createItemDisplay(item)
 	var img = document.createElement("img");
 	img.alt = "";
 	if(item.img != null)
-		img.src = "../images/" + item.img;
+		img.src = item.img;
 	else
 		img.src="../images/na.jpg";
 	img.style = "width: auto; height: 150px;";
@@ -125,12 +125,38 @@ function createItemDisplay(item)
 	else
 		name.innerHTML = item.name;
 	capt.appendChild(nameheader);
+
+	if(item.price == undefined)
+	{
+		var date = document.createElement("p");
+		date.innerHTML = "End Date: " + item.end_date;
+		//capt.appendChild(document.createElement("br"));
+		capt.appendChild(date);
+	}
+
 	nameheader.appendChild(name);
 
 	var desc = document.createElement("p");
 	desc.innerHTML = item.descr;
 	capt.appendChild(desc);
 
+	/*var buttons = document.createElement("div");	
+	var wish = document.createElement("button");
+	wish.innerHTML="Add to wish list";
+	wish.className="pull-right";
+	var buy = document.createElement("button");
+	buy.className="pull-right";
+	if(item.price != undefined)
+	{
+		buy.innerHTML = "Buy";
+	}
+	else
+	{
+		buy.innerHTML = "Place Bid";
+	}
+	buttons.appendChild(wish);
+	buttons.appendChild(buy);
+	capt.appendChild(buttons*/
 	/*var ratingHolder = document.createElement("div");
 	ratingHolder.className = "ratings";
 	thumb.appendChild(ratingHolder);

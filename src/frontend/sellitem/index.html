@@ -9,7 +9,7 @@
     <link href="css/layout.css" rel="stylesheet">
 </head>
 
-<body onload="">
+<body onload="init();">
 
 <!-- Navigation -->
     <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
@@ -64,51 +64,41 @@
                     <dd>Male</dd>
                   </dl>
                 </div>-->
-                <form>
+                <form id="information">
                 <div class=" col-md-9 col-lg-6 "> 
                   <table class="table table-user-information">
                     <tbody>
                       <tr>
-                        <td>Username</td>
+                        <td>Name</td>
                         <td id="username"><input class='pull-right' type='field' name='username'></input></td>
                       </tr>
                       <tr>
-                        <td>Password</td>
-                        <td><input class='pull-right' type='password' name='password'></input></td>
+                        <td>Description</td>
+                        <td><textarea class='pull-right' name='description'></textarea></td>
                       </tr>
                       <tr>
-                        <td>Email</td>
+                        <td>Price</td>
                         <td><input class='pull-right' type='field' name='email'></input></td>
                       </tr>
                       <tr>
-                        <td>Name</td>
+                        <td>Image URL</td>
                         <td><input class='pull-right' type='field' name='name'></input></td>
                       </tr>
                       <tr>
-                        <td>Date of Birth</td>
+                        <td>Location</td>
                         <td id="dob"><input class='pull-right' type='date' name='dob'></input></td>
                       </tr>
                       <tr>
-                        <td>Gender</td>
-                        <td id="gender"><input class='pull-right' type='field' maxlength='1' name='gender'></input></td>
+                        <td>Keywords</td>
+                        <td id="gender"><input class='pull-right' type='field' name='gender'></input></td>
                       </tr>
                       <tr>
-                        <td>Income</td>
-                        <td><input class='pull-right' type='field' name='income'></input></td>
+                        <td>Category</td>
+                        <td><select id="category-selector" class='pull-right' name='category'></select></td>
                       </tr>
-                      <tr>
-                        <td>Address</td>
-                        <td id="address"><input class='pull-right' type='field' name='address'></input></td>
-                      </tr>
-                        <td>Phone Number</td>
-                        <td id="phone"><input class='pull-right' type='field' name='phone'></input></td>
-                      </tr>
-                      <tr>
+                      <tr style="border-top:0;">
                         <td></td>
-                      </tr>
-                      <tr>
-                        <td></td>
-                        <td><input type='submit' name='register' class='pull-right' value='Register' onclick='submitRegistration();return false;'></td>
+                        <td><input type='submit' name='register' class='pull-right' value='Register' onclick='sellItem();return false;'></td>
                       </tr>
                     </tbody>
                   </table>
@@ -129,7 +119,7 @@
 
     <script src="js/func.js"></script>
 
-    <script src="js/load_account.js"></script>
+    <script src="js/registration.js"></script>
 
     <script src="../js/session.js"></script>
 </body>

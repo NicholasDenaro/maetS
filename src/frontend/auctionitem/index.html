@@ -1,5 +1,5 @@
 <html>
-<!--http://bootsnipp.com/snippets/featured/simple-user-profile-->
+
 <head>
 <!-- Bootstrap Core CSS -->
     <link href="css/bootstrap.min.css" rel="stylesheet">
@@ -9,7 +9,7 @@
     <link href="css/layout.css" rel="stylesheet">
 </head>
 
-<body onload="checkIfLoggedIn();init();">
+<body onload="init();">
 
 <!-- Navigation -->
     <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
@@ -41,16 +41,16 @@
        <br>
   <p class=" text-info">May 05,2014,03:00 pm </p>
       </div>-->
-        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 col-xs-offset-0 col-sm-offset-0 col-md-offset-3 col-lg-offset-3 toppad" >
+        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-4 col-xs-offset-0 col-sm-offset-0 col-md-offset-3 col-lg-offset-3 toppad" >
    
    
           <div class="panel panel-info">
             <div class="panel-heading">
-              <h3 class="panel-title" id="uname"></h3>
+              <h3 class="panel-title">Registration Form</h3>
             </div>
             <div class="panel-body">
               <div class="row">
-                <div class="col-md-3 col-lg-3 " align="center"> <img alt="User Pic" class="img-circle img-responsive"></div>
+                <!--<div class="col-md-3 col-lg-3 " align="center"> <img alt="User Pic" class="img-circle img-responsive"></div>-->
                 
                 <!--<div class="col-xs-10 col-sm-10 hidden-md hidden-lg"> <br>
                   <dl>
@@ -64,54 +64,52 @@
                     <dd>Male</dd>
                   </dl>
                 </div>-->
-                <div class=" col-md-9 col-lg-9 "> 
+                <form id="information">
+                <div class=" col-md-9 col-lg-6 "> 
                   <table class="table table-user-information">
                     <tbody>
                       <tr>
-                        <td>Username</td>
-                        <td id="username"></td>
+                        <td>Name</td>
+                        <td id="username"><input class='pull-right' type='field' name='username'></input></td>
                       </tr>
                       <tr>
-                        <td>Email</td>
-                        <td><a id="email" href="mailto:info@support.com">info@support.com</a></td>
+                        <td>Description</td>
+                        <td><input class='pull-right' type='textarea' name='password'></input></td>
                       </tr>
                       <tr>
-                        <td>Date of Birth</td>
-                        <td id="dob"></td>
+                        <td>Starting Bid</td>
+                        <td><input class='pull-right' type='field' name='email'></input></td>
                       </tr>
                       <tr>
-                        <td>Gender</td>
-                        <td id="gender"></td>
+                        <td>End Date</td>
+                        <td><input class='pull-right' type='field' placeholder="YYYY-MM-DD" maxlength="10" name='date'></input></td>
                       </tr>
-                        <tr>
-                        <td>Address</td>
-                        <td id="address"></td>
+                      <tr>
+                        <td>Image URL</td>
+                        <td><input class='pull-right' type='field' name='name'></input></td>
                       </tr>
-                        <td>Phone Number</td>
-                        <td id="phone">
-                        </td>
-                           
+                      <tr>
+                        <td>Location</td>
+                        <td id="dob"><input class='pull-right' type='date' name='dob'></input></td>
                       </tr>
-                     
+                      <tr>
+                        <td>Keywords</td>
+                        <td id="gender"><input class='pull-right' type='field' name='gender'></input></td>
+                      </tr>
+                      <tr>
+                        <td>Category</td>
+                        <td><select id="category-selector" class='pull-right' name='category'></select></td>
+                      </tr>
+                      <tr style="border-top:0;">
+                        <td></td>
+                        <td><input type='submit' name='register' class='pull-right' value='Register' onclick='auctionItem();return false;'></td>
+                      </tr>
                     </tbody>
                   </table>
-                  
-                  <a href="../Listings/" class="btn btn-primary">My Shop</a>
-                  <!--<a href="#" class="btn btn-primary">My Shop</a>-->
-                  <a href="../sellitem" class="btn btn-primary">Sell Item</a>
-                  <a href="../auctionitem" class="btn btn-primary">Auction Item</a>
-                  <a href="../Wishlist" class="btn btn-primary">My Wishlist</a>
                 </div>
+                </form>
               </div>
             </div>
-                 <div class="panel-footer">
-                        <a data-original-title="Broadcast Message" data-toggle="tooltip" type="button" class="btn btn-sm btn-primary"><i class="glyphicon glyphicon-envelope"></i></a>
-                        <span class="pull-right">
-                            <a href="edit.html" data-original-title="Edit this user" data-toggle="tooltip" type="button" class="btn btn-sm btn-warning"><i class="glyphicon glyphicon-edit"></i></a>
-                            <a data-original-title="Remove this user" data-toggle="tooltip" type="button" class="btn btn-sm btn-danger"><i class="glyphicon glyphicon-remove"></i></a>
-                        </span>
-                    </div>
-            
           </div>
         </div>
       </div>
@@ -125,7 +123,7 @@
 
     <script src="js/func.js"></script>
 
-    <script src="js/load_account.js"></script>
+    <script src="js/registration.js"></script>
 
     <script src="../js/session.js"></script>
 </body>
