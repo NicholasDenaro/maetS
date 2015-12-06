@@ -1,6 +1,24 @@
 function init()
 {
+	checkIfLoggedIn();
 
+	var URL = "../../backend/api/Category.php?catId=%";
+	$.ajax({
+		url: URL,
+		success: function(data)
+		{
+			data = JSON.parse(data);
+			var select = document.getElementById("category-selector");
+			for(var i = 0; i < data.length; i++)
+			{
+				select[i] = new Option(data[i].cname,data[i].cid);
+			}
+		},
+		error: function(xhr, ajaxOptions, thrownError)
+		{
+			console.log("Error on ajax call...\n" + xhr.status + "\n" + thrownError + "\nURL: " + URL);
+		}
+	});
 }
 
 function sellItem()

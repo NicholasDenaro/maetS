@@ -51,10 +51,31 @@ function processItemResponse(data)
 	}
 }
 
+function removeItemFromWishlist(iid)
+{
+	var URL = "../../backend/api/AddItemToWishlist.php?iid="+iid+"&remove";
+	$.ajax({
+		url: URL,
+		success: function(data)
+		{
+			data=JSON.parse(data);
+			if(data.success)
+			{
+				//alert("Item removed from wishlist");
+				location.reload();
+			}
+		},
+		error: function(xhr, ajaxOptions, thrownError)
+		{
+			console.log("Error on ajax call...\n" + xhr.status + "\n" + thrownError + "\nURL: " + URL);
+		}
+	});
+}
+
 function createItemDisplay(item)
 {
 	var outer = document.createElement("li");
-	outer.className = "list-group-item";
+	outer.className = "list-group-item row";
 	var value;
 	if(item["price"] != undefined)
 	{
@@ -65,23 +86,45 @@ function createItemDisplay(item)
 		value = item["min_price"];
 	}
 
+	var divLeft=document.createElement("div");
+	divLeft.className="col-md-3";
+	divLeft.style.textAlign="center";
+	outer.appendChild(divLeft);
+
 	var img = document.createElement("img");
 	if(item.img != null)
 		img.src = item["img"];
 	else
 		img.src="../images/na.jpg";
-	img.style = "width: auto; height: 150px;";
-	outer.appendChild(img);
+	img.style = "width: auto; height: 150px; align:center";
+	divLeft.appendChild(img);
 
-	var descr = document.createElement("div");
-	descr.className = "pull-right";
-	descr.innerHTML = item["descr"];
-	outer.appendChild(descr);
+	var divRight=document.createElement("div");
+	divRight.className="col-md-9";
+	divRight.style="height: 150px";
+	outer.appendChild(divRight);
+
+	var name = document.createElement("a");
+	name.innerHTML = item["name"];
+	//name.className = "pull-right";
+	name.href = "../item/?iid=" + item["iid"];
+	divRight.appendChild(name);
 
 	var price = document.createElement("div");
-	price.className = "";
 	price.innerHTML = "$" + value;
-	outer.appendChild(price);
+	//price.className = "pull-right";
+	divRight.appendChild(price);
+
+	var descr = document.createElement("div");
+	//descr.className = "pull-right";
+	descr.innerHTML = item["descr"];
+	divRight.appendChild(descr);
+
+	var remove = document.createElement("button");
+	remove.style="bottom: 0; right: 0; position: absolute";
+	remove.innerHTML="Remove";
+	remove.onclick= function(){removeItemFromWishlist(item["iid"]);};
+	divRight.appendChild(remove);
 
 	return outer;
 }

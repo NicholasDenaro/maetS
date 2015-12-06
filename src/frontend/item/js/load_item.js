@@ -1,5 +1,26 @@
 function init()
 {
+	var func = function(){checkIfLoggedIn(function(data)
+		{
+			if(data != false)
+			{
+				if(data["supplier"])
+				{
+					var buy = document.getElementById("buy-button");
+					var wishlist = document.getElementById("wishlist-button");
+					buy.parentNode.removeChild(buy);
+					wishlist.parentNode.removeChild(wishlist);
+				}
+			}
+			else
+			{
+				var buy = document.getElementById("buy-button");
+				var wishlist = document.getElementById("wishlist-button");
+				buy.parentNode.removeChild(buy);
+				wishlist.parentNode.removeChild(wishlist);
+			}
+		});};
+
 	var itemId = getItemIdFromURL();
 	var URL = "../../backend/api/SaleItem.php?itemId="+itemId;
 	$.ajax({
@@ -7,6 +28,19 @@ function init()
 		success: function(data)
 		{
 			processResponse(data);
+			var URL = "../../backend/api/AuctionItem.php?itemId="+itemId;
+			$.ajax({
+				url: URL,
+				success: function(data)
+				{
+					processResponse(data);
+					func();
+				},
+				error: function(xhr, ajaxOptions, thrownError)
+				{
+					console.log("Error on ajax call...\n" + xhr.status + "\n" + thrownError + "\nURL: " + URL);
+				}
+			});
 		},
 		error: function(xhr, ajaxOptions, thrownError)
 		{
@@ -14,18 +48,7 @@ function init()
 		}
 	});
 
-	var URL = "../../backend/api/AuctionItem.php?itemId="+itemId;
-	$.ajax({
-		url: URL,
-		success: function(data)
-		{
-			processResponse(data);
-		},
-		error: function(xhr, ajaxOptions, thrownError)
-		{
-			console.log("Error on ajax call...\n" + xhr.status + "\n" + thrownError + "\nURL: " + URL);
-		}
-	});
+
 }
 
 function getItemIdFromURL()
@@ -52,12 +75,17 @@ function bidItem(iid)
 
 function addToWishList(iid)
 {
-	var URL = "../../backend/api/Wishlist.php?itemId="+itemId;
+	var URL = "../../backend/api/AddItemToWishlist.php?iid="+iid;
 	$.ajax({
 		url: URL,
 		success: function(data)
 		{
-			processResponse(data);
+			data=JSON.parse(data);
+			if(data.success)
+			{
+				alert("Item added to wishlist");
+
+			}
 		},
 		error: function(xhr, ajaxOptions, thrownError)
 		{
@@ -131,18 +159,20 @@ function createItemDisplay(item)
 	var wish = document.createElement("button");
 	wish.innerHTML="Add to wish list";
 	wish.className="pull-right";
-	wish.onclick="addToWishList('"+item.iid+"')";
+	wish.setAttribute('onclick',"addToWishList('"+item.iid+"');");
+	wish.id="wishlist-button";
 	var buy = document.createElement("button");
 	buy.className="pull-right";
+	buy.id="buy-button";
 	if(item.price != undefined)
 	{
 		buy.innerHTML = "Buy";
-		buy.onclick="buyItem('"+item.iid+"')";
+		buy.setAttribute('onclick',"buyItem('"+item.iid+"');");
 	}
 	else
 	{
 		buy.innerHTML = "Place Bid";
-		buy.onclick="bidItem('"+item.iid+"')";
+		buy.setAttribute('onclick',"bidItem('"+item.iid+"');");
 	}
 	buttons.appendChild(wish);
 	buttons.appendChild(buy);

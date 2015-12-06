@@ -192,6 +192,41 @@ function addItemToWishlist($username, $iid)
 	}
 }
 
+function removeItemFromWishlist($username, $iid)
+{
+	//query creation
+	$wishlistQuery = sprintf("select * from wishes_for where username='%s';",$username);
+	//query database
+	$databaseConnection = GetDatabaseConnection();
+	$wishlistResult = $databaseConnection->query($wishlistQuery);
+	if($wishlistResult->num_rows == 0)
+	{
+		$wid = getUniqid("wishes_for","wid");
+		$wishlistQuery = sprintf("insert into wishes_for (`wid`,`username`) VALUES ('%s','%s');",$wid, $username);
+		//query database
+		$databaseConnection = GetDatabaseConnection();
+		$wishlistResult = $databaseConnection->query($wishlistQuery);
+	}
+	else
+	{
+		$wid = $wishlistResult->fetch_assoc()["wid"];
+	}
+
+	//query creation
+	$itemQuery = sprintf("DELETE FROM filled_with WHERE wid='%s' AND iid='%s';",$wid,$iid);
+	//query database
+	$databaseConnection = GetDatabaseConnection();
+	$itemResult = $databaseConnection->query($itemQuery);
+	if($itemResult)
+	{
+		return json_encode(array("success"=>"true"));
+	}
+	else
+	{
+		echo $databaseConnection->error;
+	}
+}
+
 function addKeywordsToItem($iid, $keywords)
 {
 	if($keywords == null)
@@ -817,10 +852,14 @@ function getItemsByCategoryAndPhrase($category, $phrase)
 }
 
 //This function will return all items associated with a keyword when supplied with a keyword
-function getItemsByUser( $username )
+function getItemsByUser( $username, $supplier )
 {
+
+	$table = $supplier ? "supplier_stocked" : "user_stocked";
+	$attribute = $supplier ? "supplier" : "username";
+
 	//query creation
-	$itemQuery = "SELECT * FROM user_stocked natural join item natural join Sale_Item WHERE username = '".$username."'";
+	$itemQuery = "SELECT * FROM ".$table." natural join item natural join Sale_Item WHERE ".$attribute." = '".$username."'";
 
 	//query database
 	$databaseConnection = GetDatabaseConnection();
@@ -835,7 +874,7 @@ function getItemsByUser( $username )
 		}
 	}
 
-	$itemQuery = "SELECT * FROM user_stocked natural join item natural join Auction_Item WHERE username = '".$username."'";
+	$itemQuery = "SELECT * FROM ".$table." natural join item natural join Auction_Item WHERE ".$attribute." = '".$username."'";
 
 	//query database
 	$databaseConnection = GetDatabaseConnection();
@@ -881,7 +920,7 @@ function getShopByUser( $userName )
 function getSupplier( $supplierName )
 {
 	//query creation
-	$supplierQuery = "SELECT * FROM Supplier_Stocked S WHERE S.username LIKE '".$supplierName."'";
+	$supplierQuery = "SELECT * FROM Supplier WHERE company_name LIKE '".$supplierName."'";
 
 	//query database
 	$databaseConnection = GetDatabaseConnection();
@@ -889,7 +928,7 @@ function getSupplier( $supplierName )
 
 	//If no results then stop
 	if($supplierResult == false){
-		return "No results for '".$supplierName."'";
+		return json_encode(array("error"=>"No results for '".$supplierName."'"));
 	}
 
 	//Loop through results and add each row to array
@@ -1078,16 +1117,26 @@ function getWishedByUser( $userName )
 	return json_encode($output);
 }
 
-function login($user, $pass)
+function login($user, $pass, $supplier)
 {
-	//query creation
-	//Use "LIKE" because then we can pattern match.
-	$userQuery = "SELECT * FROM user U WHERE U.username = '" . $user . "' AND U.upassword = '" . $pass . "';";
+	if(!$supplier)
+	{
+		//query creation
+		$userQuery = "SELECT * FROM user U WHERE U.username = '" . $user . "' AND U.upassword = '" . $pass . "';";
 
-	//query database
-	$databaseConnection = GetDatabaseConnection();
-	$userResult = $databaseConnection->query($userQuery);
+		//query database
+		$databaseConnection = GetDatabaseConnection();
+		$userResult = $databaseConnection->query($userQuery);
+	}
+	else
+	{
+		//query creation
+		$userQuery = "SELECT * FROM supplier WHERE company_name = '" . $user . "' AND password = '" . $pass . "';";
 
+		//query database
+		$databaseConnection = GetDatabaseConnection();
+		$userResult = $databaseConnection->query($userQuery);
+	}
 	//If there are not results then stop.
 	if($userResult === false)
 	{

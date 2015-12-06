@@ -1,15 +1,36 @@
 function initListings(catId)
 {
-	$.ajax({
+
+	checkIfLoggedIn(function()
+	{
+		var URL = "../../backend/api/ItemByUser.php";
+		var username = getUsernameFromURL();
+		if(username != -1)
+			URL += "?username="+username;
+
+		$.ajax({
+			url: URL,
+			success: function(data)
+			{
+				var check = JSON.parse(data);
+				if(check["error"])
+				{
+					window.location.href="../homepage/";
+				}
+				processItemResponse(data);
+			},
+			error: function(xhr, ajaxOptions, thrownError)
+			{
+				console.log("Error on ajax call...\n" + xhr.status + "\n" + thrownError + "\nURL: " + URL);
+			}
+		});
+	});
+
+	/*$.ajax({
 		url:"../../backend/api/Login.php?check",
 		success: function(dat)
 		{
 			dat = JSON.parse(dat);
-
-			if(dat["error"] != undefined)
-			{
-				window.location.href = "../homepage/";
-			}
 
 			URL = "../../backend/api/ItemByUser.php?userId="+dat["user"];
 			$.ajax({
@@ -24,7 +45,19 @@ function initListings(catId)
 				}
 			});
 		}
-	});
+	});*/
+}
+
+function getUsernameFromURL()
+{
+	var str = window.location.search;
+	str = str.substring(str.lastIndexOf("?") + 1);
+	var pair = str.split('=');
+	if(pair[0]=="username")
+	{
+		return pair[1];
+	}
+	return -1;
 }
 
 function clearItems()

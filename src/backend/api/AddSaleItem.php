@@ -32,7 +32,7 @@ if(isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === 'GET')
 		echo $result;
 
 		$res = json_decode($result, true);
-		if(isset($_GET['supplier']))
+		if($_SESSION['supplier'])
 		{
 			//add to supplier_stocked
 			addItemToSupplierStocked($res["iid"], $_seller);

@@ -1,20 +1,21 @@
-function checkIfLoggedIn()
+function checkIfLoggedIn(callback)
 {
     $.ajax({
-        url: "../../backend/api/Login.php?user=a&pass=a",
+        url: "../../backend/api/Login.php?check",
         success: function(data)
         {
             data = JSON.parse(data);
-            if(data["error"] != undefined)
+            if(data["success"] != undefined)
             {
-                if(data["error"] == "Can't log in twice")
-                {
-                    addAccountOptions(data["user"]);
-                }
-                else if(data["error"] == "failed to log in. =(")
-                {
-                    addLoginOptions();
-                }
+                addAccountOptions(data["user"]);
+                if(callback != undefined)
+                    callback(data);
+            }
+            else if(data["error"] == "not logged in.")
+            {
+                addLoginOptions();
+                if(callback != undefined)
+                    callback(false);
             }
         }
     });
@@ -28,8 +29,14 @@ function submitLogin()
     var loginType="user"
     if(!type.checked)
         loginType="supplier"
+
+    var URL = "../../backend/api/Login.php?user="+username.value+"&pass="+password.value;
+
+    if(loginType=="supplier")
+        URL+="&supplier";
+
     $.ajax({
-        url: "../../backend/api/Login.php?user="+username.value+"&pass="+password.value,
+        url: URL,
         success: function(data)
         {
             data = JSON.parse(data);
