@@ -967,26 +967,48 @@ function getStockedBySupplier( $supplierName )
 }
 
 //This function will return all of the transactions of a supplier when supplied with a supplier name
-function getSoldBySupplier( $supplierName )
+function getTransactionsBySupplier( $supplierName )
 {
 	//query creation
-	$supplier_transQuery = "SELECT * FROM Supplier_Trans S WHERE S.username LIKE '".$supplierName."'";
+	$supplier_transQuery = "SELECT * FROM sale_item NATURAL JOIN item NATURAL JOIN Supplier_Trans WHERE supplier = '".$supplierName."'";
 	
 	//query database
 	$databaseConnection = GetDatabaseConnection();
 	$supplier_transResult = $databaseConnection->query($supplier_transQuery);
 
-	//If no results then stop
-	if($supplier_transResult == false){
-		return "No results for '".$supplierName."'";
+	$output = array();
+
+	if($supplier_transResult != false)
+	{
+		//Loop through results and add each row to array
+		while($row = $supplier_transResult->fetch_assoc())
+		{
+			array_push($output, $row);
+		}
 	}
 
-	//Loop through results and add each row to array
-	$output = array();
-	while($row = $supplier_transResult->fetch_assoc()){
-		array_push($output, $row);
+	//query creation
+	$supplier_transQuery = "SELECT * FROM auction_item NATURAL JOIN item NATURAL JOIN  Supplier_Trans WHERE supplier = '".$supplierName."'";
+	
+	//query database
+	$databaseConnection = GetDatabaseConnection();
+	$supplier_transResult = $databaseConnection->query($supplier_transQuery);
+
+	if($supplier_transResult != false)
+	{
+		//Loop through results and add each row to array
+		while($row = $supplier_transResult->fetch_assoc())
+		{
+			array_push($output, $row);
+		}
 	}
 	
+	//If no results then stop
+	if(count($output) == 0)
+	{
+		return json_encode(array("error"=>"No results for '".$supplierName."'"));
+	}
+
 	//format output
 	return json_encode($output);
 }
@@ -1045,26 +1067,80 @@ function getStockedByUser( $userName )
 }
 
 //This function will return all of the transactions of a user when supplied with a user name
-function getSoldByUser( $userName )
+function getTransactionsByUser( $userName )
 {
 	//query creation
-	$user_transQuery = "SELECT * FROM User_Transaction U WHERE U.username LIKE ".$userName."'";
+	$user_transQuery = "SELECT * FROM Sale_Item NATURAL JOIN item NATURAL JOIN User_Transaction WHERE busername = '".$userName."' OR cusername = '".$userName."';";
 
 	//query database
 	$databaseConnection = GetDatabaseConnection();
 	$user_tranResult = $databaseConnection->query($user_transQuery);
 
-	//If no results then stop
-	if($user_tranResult == false){
-		return "No results for '".$userName."'";
+	$output = array();
+
+	if($user_tranResult != false)
+	{
+		//Loop through results and add each row to array
+		while($row = $user_tranResult->fetch_assoc())
+		{
+			array_push($output, $row);
+		}
 	}
 
-	//Loop through results and add each row to array
-	$output = array();
-	while($row = $user_tranResult->fetch_assoc()){
-		array_push($output, $row);
+	//query creation
+	$user_transQuery = "SELECT * FROM auction_item NATURAL JOIN item  NATURAL JOIN User_Transaction WHERE busername = '".$userName."' OR cusername = '".$userName."';";
+
+	//query database
+	$databaseConnection = GetDatabaseConnection();
+	$user_tranResult = $databaseConnection->query($user_transQuery);
+
+	if($user_tranResult != false)
+	{
+		//Loop through results and add each row to array
+		while($row = $user_tranResult->fetch_assoc())
+		{
+			array_push($output, $row);
+		}
+	}
+
+	//query creation
+	$user_transQuery = "SELECT * FROM sale_item NATURAL JOIN item  NATURAL JOIN Supplier_Transaction WHERE username = '".$userName."';";
+
+	//query database
+	$databaseConnection = GetDatabaseConnection();
+	$user_tranResult = $databaseConnection->query($user_transQuery);
+
+	if($user_tranResult != false)
+	{
+		//Loop through results and add each row to array
+		while($row = $user_tranResult->fetch_assoc())
+		{
+			array_push($output, $row);
+		}
+	}
+
+	//query creation
+	$user_transQuery = "SELECT * FROM auction_item NATURAL JOIN item  NATURAL JOIN Supplier_Transaction WHERE username = '".$userName."';";
+
+	//query database
+	$databaseConnection = GetDatabaseConnection();
+	$user_tranResult = $databaseConnection->query($user_transQuery);
+
+	if($user_tranResult != false)
+	{
+		//Loop through results and add each row to array
+		while($row = $user_tranResult->fetch_assoc())
+		{
+			array_push($output, $row);
+		}
 	}
 	
+	//If no results then stop
+	if(count($output) == 0)
+	{
+		return json_encode(array("error"=>"No results for '".$userName."'"));
+	}
+
 	//format output
 	return json_encode($output);
 }

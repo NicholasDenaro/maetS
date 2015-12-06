@@ -94,7 +94,7 @@ function createItemDisplay(item)
 
 	var img = document.createElement("img");
 	img.alt = "";
-	if(item.img != null)
+	if(item.img != null && item.img != "")
 		img.src = item.img;
 	else
 		img.src="../images/na.jpg";

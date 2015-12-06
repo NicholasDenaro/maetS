@@ -1,23 +1,21 @@
-function initListings(catId)
+function initTransactions()
 {
 
-	checkIfLoggedIn(function()
+	checkIfLoggedIn(function(check)
 	{
-		var URL = "../../backend/api/ItemByUser.php";
-		var username = getUsernameFromURL();
-		if(username != -1)
-			URL += "?username="+username;
+		if(check == false)
+		{
+			window.location.href="../homepage/";
+		}
 
+		var URL = "../../backend/api/Transaction.php";
 		$.ajax({
 			url: URL,
 			success: function(data)
 			{
-				var check = JSON.parse(data);
-				if(check["error"])
-				{
-					window.location.href="../homepage/";
-				}
-				processItemResponse(data);
+				data = JSON.parse(data);
+				var myself = data["current_user"];
+				processItemResponse(myself,data["items"]);
 			},
 			error: function(xhr, ajaxOptions, thrownError)
 			{
@@ -25,39 +23,6 @@ function initListings(catId)
 			}
 		});
 	});
-
-	/*$.ajax({
-		url:"../../backend/api/Login.php?check",
-		success: function(dat)
-		{
-			dat = JSON.parse(dat);
-
-			URL = "../../backend/api/ItemByUser.php?userId="+dat["user"];
-			$.ajax({
-				url: URL,
-				success: function(data)
-				{
-					processItemResponse(data);
-				},
-				error: function(xhr, ajaxOptions, thrownError)
-				{
-					console.log("Error on ajax call...\n" + xhr.status + "\n" + thrownError + "\nURL: " + URL);
-				}
-			});
-		}
-	});*/
-}
-
-function getUsernameFromURL()
-{
-	var str = window.location.search;
-	str = str.substring(str.lastIndexOf("?") + 1);
-	var pair = str.split('=');
-	if(pair[0]=="username")
-	{
-		return pair[1];
-	}
-	return -1;
 }
 
 function clearItems()
@@ -71,20 +36,20 @@ function clearItems()
 	}
 }
 
-function processItemResponse(data)
+function processItemResponse(myself, data)
 {
-	data = JSON.parse(data);
+	//data = JSON.parse(data);
 	for(var i = 0; i < data.length; i++)
 	{
 		var item = data[i];
-		var div = createItemDisplay(item);
+		var div = createItemDisplay(myself,item);
 
 		var displayCase = document.getElementById("display-case");
 		displayCase.appendChild(div);
 	}
 }
 
-function createItemDisplay(item)
+function createItemDisplay(myself, item)
 {
 	/*var outer = document.createElement("li");
 	outer.className = "list-group-item";
@@ -121,11 +86,11 @@ function createItemDisplay(item)
 	var value;
 	if(item["price"] != undefined)
 	{
-		value = "Price: $"+item["price"];
+		value = item["price"];
 	}
 	else
 	{
-		value = "Bid: $"+item["min_price"];
+		value = item["min_price"];
 	}
 
 	var divLeft=document.createElement("div");
@@ -149,26 +114,37 @@ function createItemDisplay(item)
 	var name = document.createElement("a");
 	name.innerHTML = item["name"];
 	//name.className = "pull-right";
-	name.href = "../item/?iid=" + item["iid"];
+	//name.href = "../item/?iid=" + item["iid"];
 	divRight.appendChild(name);
 
+	var date = document.createElement("div");
+	if(item["utdate"] != undefined)
+		date.innerHTML = "Sold on: "+item["utdate"];
+	else
+		date.innerHTML = "Sold on: "+item["stdate"];
+	//name.className = "pull-right";
+	//name.href = "../item/?iid=" + item["iid"];
+	divRight.appendChild(date);
+
 	var price = document.createElement("div");
-	price.innerHTML = value;
+	price.innerHTML = "Price: $" + value;
 	//price.className = "pull-right";
 	divRight.appendChild(price);
-
-	if(item["price"] == undefined)
-	{
-		var ending = document.createElement("div");
-		ending.innerHTML = "Ending on: "+item["end_date"];
-		//price.className = "pull-right";
-		divRight.appendChild(ending);
-	}
 
 	var descr = document.createElement("div");
 	//descr.className = "pull-right";
 	descr.innerHTML = item["descr"];
 	divRight.appendChild(descr);
+
+	var action = document.createElement("p");
+	action.style="bottom: 0; right: 0; position: absolute";
+	if(myself == item["cusername"])
+		action.innerHTML="Sold";
+	else if(myself == item["busername"])
+		action.innerHTML="Purchased";
+	else
+		action.innerHTML="Sold";
+	divRight.appendChild(action);
 
 	return outer;
 }
