@@ -9,7 +9,7 @@ if(isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === 'GET')
 	//This checks to see if anything was passed into the parameter userName
 	if (!isset($_GET['iid']))
 	{
-		//handle error
+		echo json_encode(array("error"=>"Missing item id."));
 	}
 	else
 	{
@@ -21,6 +21,12 @@ if(isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === 'GET')
 			return;
 		}
 		$_buyer=($_SESSION['username']);
+
+		if($_SESSION['supplier'])
+		{
+			echo json_encode(array("error"=>"Suppliers may not buy items."));
+			return;
+		}
 
 		echo transaction($_iid,$_buyer);
 	}

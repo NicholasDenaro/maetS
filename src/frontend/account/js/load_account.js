@@ -36,6 +36,10 @@ function init()
 				});
 			}
 		}
+		else
+		{
+			window.location.href = "../homepage/";
+		}
 	});
 	
 }

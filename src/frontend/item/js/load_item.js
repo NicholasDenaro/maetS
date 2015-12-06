@@ -65,7 +65,30 @@ function getItemIdFromURL()
 
 function buyItem(iid)
 {
-
+	if(confirm("Buy Item?"))
+	{
+		var URL = "../../backend/api/AddTransaction.php?iid="+iid;
+		$.ajax({
+			url: URL,
+			success: function(data)
+			{
+				data = JSON.parse(data);
+				if(data["success"])
+				{
+					alert("Item has been purchased.");
+					document.location.href="../homepage/";
+				}
+				else
+				{
+					alert("Item could not be purchased.");
+				}
+			},
+			error: function(xhr, ajaxOptions, thrownError)
+			{
+				console.log("Error on ajax call...\n" + xhr.status + "\n" + thrownError + "\nURL: " + URL);
+			}
+		});
+	}
 }
 
 function bidItem(iid)
