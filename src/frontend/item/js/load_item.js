@@ -93,7 +93,33 @@ function buyItem(iid)
 
 function bidItem(iid)
 {
+	var price = document.getElementById("item-price");
+	var bid = prompt("Enter how much to raise bid.\nCurrent bid is "+price.innerHTML);
 
+	if(!isNaN(bid) && bid > 0)
+	{
+		var URL = "../../backend/api/AddBid.php?iid="+iid+"&bid="+bid;
+		$.ajax({
+			url: URL,
+			success: function(data)
+			{
+				data = JSON.parse(data);
+				if(data["success"])
+				{
+					alert("Item has been bid on.");
+					location.reload();
+				}
+				else
+				{
+					alert("Item could not be bid on.");
+				}
+			},
+			error: function(xhr, ajaxOptions, thrownError)
+			{
+				console.log("Error on ajax call...\n" + xhr.status + "\n" + thrownError + "\nURL: " + URL);
+			}
+		});
+	}
 }
 
 function addToWishList(iid)
@@ -152,6 +178,7 @@ function createItemDisplay(item)
 
 	var price = document.createElement("h4");
 	price.className = "pull-right";
+	price.id="item-price";
 	if(item.price != undefined)
 	{
 		price.innerHTML = "$" + item.price;

@@ -7,14 +7,14 @@ session_start();
 if(isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === 'GET')
 {
 	//This checks to see if anything was passed into the parameter userName
-	if (!isset($_GET['iid'])||!isset($_GET['value']))
+	if (!isset($_GET['iid'])||!isset($_GET['bid']))
 	{
 		//handle error
 	}
 	else
 	{
 		$_iid=($_GET['iid']);
-		$_value=($_GET['value']);
+		$_bid=($_GET['bid']);
 
 		if(!isset($_SESSION['username']) || $_SESSION['username']==null)
 		{
@@ -23,7 +23,13 @@ if(isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === 'GET')
 		}
 		$_buyer=($_SESSION['username']);
 
-		echo bid($_iid,$_buyer,$value);
+		if($_SESSION['supplier'])
+		{
+			echo json_encode(array("error"=>"Suppliers may not bid on items."));
+			return;
+		}
+
+		echo bid($_iid,$_buyer,$_bid);
 	}
 }
 
