@@ -199,8 +199,14 @@ function createItemDisplay(item)
 	{
 		var date = document.createElement("h4");
 		date.innerHTML = "End Date: " + item.end_date;
-		capt.appendChild(document.createElement("br"));
+		//capt.appendChild(document.createElement("br"));
 		capt.appendChild(date);
+
+		var bidder = document.createElement("h4");
+		bidder.innerHTML = "Last Bidder: " + item.bidder;
+		capt.appendChild(bidder);
+
+		capt.appendChild(document.createElement("br"));
 	}
 
 	nameheader.appendChild(name);

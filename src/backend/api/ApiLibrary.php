@@ -188,7 +188,7 @@ function addItemToWishlist($username, $iid)
 	}
 	else
 	{
-		echo $databaseConnection->error;
+		echo json_encode(array("error"=>$databaseConnection->error));
 	}
 }
 
@@ -436,7 +436,7 @@ function bid($iid, $bidder, $value)
 {
 	$rows = 0;
 	//query creation
-	$auctionQuery = sprintf("UPDATE auction_item NATURAL JOIN user_stocked SET min_price=min_price+%s WHERE iid = '%s' AND username<>'%s';",$value,$iid,$bidder);
+	$auctionQuery = sprintf("UPDATE auction_item NATURAL JOIN user_stocked SET min_price=min_price+%s, bidder='%s' WHERE iid = '%s' AND username<>'%s';",$value,$bidder,$iid,$bidder);
 
 	//query database
 	$databaseConnection = GetDatabaseConnection();
@@ -444,7 +444,7 @@ function bid($iid, $bidder, $value)
 
 	$rows += $databaseConnection->affected_rows;
 
-	$auction2Query = sprintf("UPDATE auction_item NATURAL JOIN supplier_stocked SET min_price=min_price+%s WHERE iid = '%s';",$value,$iid);
+	$auction2Query = sprintf("UPDATE auction_item NATURAL JOIN supplier_stocked SET min_price=min_price+%s, bidder='%s' WHERE iid = '%s';",$value,$bidder,$iid);
 
 	//query database
 	$databaseConnection = GetDatabaseConnection();
