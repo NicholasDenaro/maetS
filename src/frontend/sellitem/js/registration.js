@@ -41,7 +41,6 @@ function sellItem()
 			data = JSON.parse(data);
 			if(data.success)
 			{
-				alert(JSON.stringify(data,' ',' '));
 				document.location.href="../Account";
 			}
 			else

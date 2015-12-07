@@ -12,7 +12,7 @@ if(isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === 'GET')
 	}
 	else
 	{
-		if($_SESSION['supplier'])
+		if(isset($_SESSION['supplier']) && $_SESSION['supplier'])
 		{
 			$_username=($_SESSION['username']);
 			echo json_encode(array("current_user"=>$_username,"items"=>json_decode(getTransactionsBySupplier($_username))));

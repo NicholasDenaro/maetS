@@ -22,7 +22,7 @@ if(isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === 'GET')
 		}
 		$_buyer=($_SESSION['username']);
 
-		if($_SESSION['supplier'])
+		if(isset($_SESSION['supplier']) && $_SESSION['supplier'])
 		{
 			echo json_encode(array("error"=>"Suppliers may not buy items."));
 			return;

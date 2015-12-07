@@ -402,7 +402,7 @@ function addKeywordsToItem($iid, $keywords)
 
 function addRating($iid, $user, $rating, $comment)
 {
-	$userQuery = "SELECT * FROM user_stocked WHERE iid='".$iid."';";
+	$userQuery = "SELECT * FROM user_transaction WHERE iid='".$iid."';";
 
 	$databaseConnection = GetDatabaseConnection();
 	$userResult = $databaseConnection->query($userQuery);

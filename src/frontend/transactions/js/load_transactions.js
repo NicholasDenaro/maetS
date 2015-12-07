@@ -129,7 +129,12 @@ function createItemDisplay(myself, item)
 		img.src = item["img"];
 	else
 		img.src="../images/na.jpg";
-	img.style = "width: auto; height: 150px; align:center";
+	var i = new Image();
+	i.src = img.src;
+	if(i.height / 150 * i.width < 180)
+		img.style = "width: auto; height: 150px; align:center";
+	else
+		img.style = "width: 180px; height: auto; align:center";
 	divLeft.appendChild(img);
 
 	var divRight=document.createElement("div");
