@@ -49,6 +49,32 @@ function processItemResponse(myself, data)
 	}
 }
 
+function addReview(info)
+{
+	var rating = prompt("Rating: 0-5", 1);
+	var comment = prompt("Enter a comment:","comment");
+	var URL = "../../backend/api/AddRating.php?iid="+info["iid"]+"&rating="+rating+"&comment="+comment;
+	$.ajax({
+		url: URL,
+		success: function(data)
+		{
+			data = JSON.parse(data);
+			if(data["success"])
+			{
+				location.reload();
+			}
+			else
+			{
+				alert(data["error"]);
+			}
+		},
+		error: function(xhr, ajaxOptions, thrownError)
+		{
+			console.log("Error on ajax call...\n" + xhr.status + "\n" + thrownError + "\nURL: " + URL);
+		}
+	});
+}
+
 function createItemDisplay(myself, item)
 {
 	/*var outer = document.createElement("li");
@@ -139,11 +165,59 @@ function createItemDisplay(myself, item)
 	var action = document.createElement("p");
 	action.style="bottom: 0; right: 0; position: absolute";
 	if(myself == item["cusername"])
+	{
 		action.innerHTML="Sold";
+		if(item["rating"] == 0 && item["comment"] == null)
+		{
+			var review = document.createElement("div");
+			review.innerHTML = item["busername"] + " has not rated this transaction yet.";
+			divRight.appendChild(review);
+		}
+		else
+		{
+			var review = document.createElement("div");
+			review.innerHTML = "Rating: "+item["rating"]+"<br>Comment: "+item["comment"];
+			divRight.appendChild(review);
+		}
+	}
 	else if(myself == item["busername"])
+	{
 		action.innerHTML="Purchased";
+		if(item["rating"] == 0 && item["tcomment"] == null)
+		{
+			var review = document.createElement("div");
+			review.className="btn btn-sm btn-primary";
+			review.onclick = function(){addReview(item)};
+			//review.innerHTML="Write Review ";
+			var glyph = document.createElement("span");
+			glyph.className="glyphicon glyphicon-pencil";
+			glyph.innerHTML = " Write Review";
+			review.appendChild(glyph);
+			divRight.appendChild(review);
+		}
+		else
+		{
+			var review = document.createElement("div");
+			review.innerHTML = "Rating: "+item["rating"]+"<br>Comment: "+item["tcomment"];
+			divRight.appendChild(review);
+		}
+	}
 	else
+	{
 		action.innerHTML="Sold";
+		if(item["rating"] == 0 && item["comment"] == null)
+		{
+			var review = document.createElement("div");
+			review.innerHTML = item["busername"] + " has not rated this transaction yet.";
+			divRight.appendChild(review);
+		}
+		else
+		{
+			var review = document.createElement("div");
+			review.innerHTML = "Rating: "+item["rating"]+"<br>Comment: "+item["comment"];
+			divRight.appendChild(review);
+		}
+	}
 	divRight.appendChild(action);
 
 	return outer;
