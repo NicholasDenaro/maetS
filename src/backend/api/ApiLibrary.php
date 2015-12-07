@@ -55,6 +55,77 @@ function buildCategoryDescendants($catId)
 	return $categories;
 }
 
+function refreshAuctions()
+{
+	//query creation
+	$itemQuery = sprintf("SELECT * FROM user_stocked;");
+	//query database
+	$databaseConnection = GetDatabaseConnection();
+	$itemResult = $databaseConnection->query($itemQuery);
+
+	$output = array();
+
+	if($itemResult != false)
+	{
+		while($row = $itemResult->fetch_assoc()){
+			array_push($output, $row["iid"]);
+		}
+	}
+
+	//echo json_encode($output);
+
+	//query creation
+	$itemQuery = sprintf("SELECT * FROM supplier_stocked;");
+	//query database
+	$databaseConnection = GetDatabaseConnection();
+	$itemResult = $databaseConnection->query($itemQuery);
+
+	if($itemResult != false)
+	{
+		while($row = $itemResult->fetch_assoc()){
+			array_push($output, $row["iid"]);
+		}
+	}
+
+	$itemQuery = sprintf("SELECT * FROM auction_item WHERE iid in ('%s');", implode($output,'\',\''));
+	//echo $itemQuery;
+	$databaseConnection = GetDatabaseConnection();
+	$itemResult = $databaseConnection->query($itemQuery);
+
+	if($itemResult != false)
+	{
+		while($row = $itemResult->fetch_assoc())
+		{
+			$end = date_create($row['end_date']);
+			$end = $end->getTimestamp();
+			$now = new DateTime();
+			$now = $now->getTimestamp();
+			if($end <= $now)
+			{
+				if($row["bidder"] != null)
+					transaction($row["iid"],$row["bidder"]);
+				else
+					endAuction($row["iid"]);
+			}
+		}
+	}
+}
+
+function endAuction($iid)
+{
+	//query creation
+	$itemQuery = sprintf("DELETE FROM user_stocked WHERE iid='%s'",$iid);
+	//query database
+	$databaseConnection = GetDatabaseConnection();
+	$itemResult = $databaseConnection->query($itemQuery);
+
+	//query creation
+	$itemQuery = sprintf("DELETE FROM supplier_stocked WHERE iid='%s'",$iid);
+	//query database
+	$databaseConnection = GetDatabaseConnection();
+	$itemResult = $databaseConnection->query($itemQuery);
+}
+
 function addAuctionItem($name, $descr, $loc, $img, $price, $endDate)
 {
 	$databaseConnection = GetDatabaseConnection();
@@ -85,6 +156,8 @@ function addAuctionItem($name, $descr, $loc, $img, $price, $endDate)
 		$itemResult = $databaseConnection->query($itemQuery);
 		if($itemResult)
 		{
+			//exec('schtasks.exe /run /tn notepad');
+
 			return json_encode(array("success"=>"true","iid"=>$iid));
 		}
 		else
@@ -230,9 +303,9 @@ function removeItemFromWishlist($username, $iid)
 function addKeywordsToItem($iid, $keywords)
 {
 	if($keywords == null)
-		return;
+		return -1;
 
-	$keywords = json_decode($keywords);
+	$keywords = explode(",",$keywords);
 
 	//query creation
 	$itemQuery = sprintf("insert INTO search_key (`iid`, `word`) VALUES ('%s','%s')", $iid, $keywords[0]);

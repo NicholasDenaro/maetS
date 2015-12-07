@@ -33,19 +33,19 @@ if(isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === 'GET')
 		echo $result;
 
 		$res = json_decode($result, true);
-		if($_SESSION['supplier'])
-		{
-			//add to supplier_stocked
-			addItemToSupplierStocked($res["iid"], $_seller);
-		}
-		else
-		{
-			//addd to user_stocked
-			addItemToUserStocked($res["iid"], $_seller);
-		}
-
 		if(isset($res["success"]) && $res["success"])
 		{
+			if($_SESSION['supplier'])
+			{
+				//add to supplier_stocked
+				addItemToSupplierStocked($res["iid"], $_seller);
+			}
+			else
+			{
+				//addd to user_stocked
+				addItemToUserStocked($res["iid"], $_seller);
+			}
+					
 			addKeywordsToItem($res["iid"], $_keywords);
 			addCategoryToItem($res["iid"], $_category);
 		}

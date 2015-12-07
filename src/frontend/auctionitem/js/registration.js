@@ -35,7 +35,6 @@ function auctionItem()
 	var category = form[7].value;
 
 	var URL = "../../backend/api/AddAuctionItem.php?name="+name+"&descr="+descr+"&price="+price+"&end_date="+endDate+"&img="+url+"&location="+location+"&keywords="+keywords.split(' ')+"&category="+category;
-	alert(URL);
 	$.ajax({
 		url: URL,
 		success: function(data)

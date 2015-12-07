@@ -8,7 +8,7 @@ if(isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === 'GET')
 {
 	if(isset($_GET['logout']))
 	{
-		if($_SESSION['username'] != null)
+		if(isset($_SESSION['username']) && $_SESSION['username'] != null)
 		{
 			$_SESSION["username"] = null;
 			$_SESSION["supplier"] = null;
@@ -25,7 +25,7 @@ if(isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === 'GET')
 	//Check if logged in
 	if(isset($_GET['check']))
 	{
-		if($_SESSION['username'] != null)
+		if(isset($_SESSION['username']) && $_SESSION['username'] != null)
 		{
 			$supplier = isset($_SESSION['supplier']) ? $_SESSION['supplier'] : false;
 			echo json_encode(array("success"=>true,"user"=>$_SESSION['username'],"supplier"=>$supplier));
