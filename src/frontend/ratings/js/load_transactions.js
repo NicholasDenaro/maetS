@@ -20,8 +20,15 @@ function initTransactions()
 			success: function(data)
 			{
 				data = JSON.parse(data);
-				var myself = data["current_user"];
-				processItemResponse(myself,data["items"]);
+				if(!data["error"])
+				{
+					var myself = data["current_user"];
+					processItemResponse(myself,data["items"]);
+				}
+				else
+				{
+					alert(data["error"]);
+				}
 			},
 			error: function(xhr, ajaxOptions, thrownError)
 			{

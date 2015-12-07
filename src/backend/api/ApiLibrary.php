@@ -1417,6 +1417,38 @@ function login($user, $pass, $supplier)
 	return $output;
 }
 
+function getSellerByItem($iid)
+{
+	$userQuery = "SELECT * FROM user_stocked WHERE iid='".$iid."';";
+
+	$databaseConnection = GetDatabaseConnection();
+	$userResult = $databaseConnection->query($userQuery);
+
+	if($userResult->num_rows == 0)
+	{
+		$userQuery = "SELECT * FROM supplier_stocked WHERE iid='".$iid."';";
+
+		$databaseConnection = GetDatabaseConnection();
+		$userResult = $databaseConnection->query($userQuery);
+
+		if($userResult->num_rows != 0)
+		{
+			$row = $userResult->fetch_assoc();
+			return(json_encode(array("supplier"=>$row["supplier"])));
+		}
+		else
+		{
+			return(json_encode(array("error"=>"No seller found for item.")));
+		}
+
+	}
+	else
+	{
+		$row = $userResult->fetch_assoc();
+		return(json_encode(array("username"=>$row["username"])));
+	}
+}
+
 function transaction($iid, $buyer)
 {
 	$userQuery = "SELECT * FROM user_stocked WHERE iid='".$iid."';";

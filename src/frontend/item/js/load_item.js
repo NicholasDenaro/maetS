@@ -219,6 +219,32 @@ function createItemDisplay(item)
 	var name = document.createElement("a");
 	name.href="../item/?iid="+item.iid;
 	name.innerHTML = item.name;
+	var seller = document.createElement("a");
+	seller.innerHTML="By: ";
+
+	var URL = "../../backend/api/SellerByItem.php?iid="+item["iid"];
+	$.ajax({
+		url: URL,
+		success: function(data)
+		{
+			data = JSON.parse(data);
+			if(data["username"])
+			{
+				seller.href="../ratings/?username="+data["username"];
+				seller.innerHTML+=data["username"];
+			}
+			else
+			{
+				seller.href="../ratings/?supplier="+data["supplier"];
+				seller.innerHTML+=data["supplier"];
+			}
+		},
+		error: function(xhr, ajaxOptions, thrownError)
+		{
+			console.log("Error on ajax call...\n" + xhr.status + "\n" + thrownError + "\nURL: " + URL);
+		}
+	});
+
 	capt.appendChild(nameheader);
 
 	if(item.price == undefined)
@@ -236,6 +262,8 @@ function createItemDisplay(item)
 	}
 
 	nameheader.appendChild(name);
+	nameheader.appendChild(document.createElement("br"));
+	nameheader.appendChild(seller);
 
 	var buttons = document.createElement("div");	
 	var wish = document.createElement("button");
