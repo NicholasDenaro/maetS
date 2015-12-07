@@ -67,16 +67,42 @@ function buyItem(iid)
 {
 	if(confirm("Buy Item?"))
 	{
-		var URL = "../../backend/api/AddTransaction.php?iid="+iid;
+		var URL = "../../backend/api/CreditCard.php";
 		$.ajax({
 			url: URL,
 			success: function(data)
 			{
 				data = JSON.parse(data);
-				if(data["success"])
+				if(!data["error"])
 				{
-					alert("Item has been purchased.");
-					document.location.href="../homepage/";
+					var promptMessage="Type credit card to confirm:\n";
+					for(var i = 0 ; i < data.length; i++)
+					{
+						promptMessage+=data[i]["ctype"]+" "+data[i]["cnumber"]+"\n";
+					}
+					var creditcard = prompt(promptMessage);
+
+					var URL = "../../backend/api/AddTransaction.php?iid="+iid+"&creditcard="+creditcard;
+					$.ajax({
+						url: URL,
+						success: function(data)
+						{
+							data = JSON.parse(data);
+							if(data["success"])
+							{
+								alert("Item has been purchased.");
+								document.location.href="../homepage/";
+							}
+							else
+							{
+								alert("Item could not be purchased.");
+							}
+						},
+						error: function(xhr, ajaxOptions, thrownError)
+						{
+							console.log("Error on ajax call...\n" + xhr.status + "\n" + thrownError + "\nURL: " + URL);
+						}
+					});
 				}
 				else
 				{

@@ -801,6 +801,11 @@ function getParentCategory( $catId )
 	return json_encode($output);
 }
 
+function chargeCard($creditcard, $iid)
+{
+	return true;
+}
+
 //This function will return all credit cards of a user when supplied with a username
 function getCreditCardByUser( $userName )
 {
@@ -813,7 +818,7 @@ function getCreditCardByUser( $userName )
 	
 	//If no results then stop
 	if($credit_cardResult == false){
-		return "No results for '".$username."'";
+		return json_encode(array("error"=>"No results for '".$username."'"));
 	}
 
 	//Loop through results and add each row to array
@@ -822,6 +827,11 @@ function getCreditCardByUser( $userName )
 		array_push($output, $row);
 	}
 	
+	if(count($output) == 0)
+	{
+		return json_encode(array("error"=>"No credit cards"));
+	}
+
 	//format output
 	return json_encode($output);
 }

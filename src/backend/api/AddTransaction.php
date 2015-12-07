@@ -7,13 +7,14 @@ session_start();
 if(isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === 'GET')
 {
 	//This checks to see if anything was passed into the parameter userName
-	if (!isset($_GET['iid']))
+	if (!isset($_GET['iid'])||!isset($_GET['creditcard']))
 	{
-		echo json_encode(array("error"=>"Missing item id."));
+		echo json_encode(array("error"=>"Missing parameter."));
 	}
 	else
 	{
 		$_iid=($_GET['iid']);
+		$_creditcard=($_GET['creditcard']);
 
 		if(!isset($_SESSION['username']) || $_SESSION['username']==null)
 		{
@@ -28,7 +29,14 @@ if(isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === 'GET')
 			return;
 		}
 
-		echo transaction($_iid,$_buyer);
+		if(chargeCard($_creditcard,$_iid))
+		{
+			echo transaction($_iid,$_buyer);
+		}
+		else
+		{
+			echo json_encode(array("error"=>"Unable to charge credit card."));
+		}
 	}
 }
 
