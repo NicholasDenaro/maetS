@@ -78,13 +78,54 @@ function processResponse(data)
 					dat = JSON.parse(dat);
 					var address = document.getElementById("address");
 					if(dat.length == 0)
+					{
+						address.innerHTML+="<a type='button' class='btn btn-sm btn-success pull-right' onclick='addAddress();'><span class='glyphicon glyphicon-plus'></span></a>";
 						return;
-					address.innerHTML = dat[0]["street"]+" "+dat[0]["city"]+", "+dat[0]["astate"]+" "+dat[0]["zip"]+" Apt #"+dat[0]["apt_number"];
+					}
+					//address.innerHTML = dat[0]["street"]+" "+dat[0]["city"]+", "+dat[0]["astate"]+" "+dat[0]["zip"]+" Apt #"+dat[0]["apt_number"];
+					//"<a type='button' class='btn btn-sm btn-danger pull-right' onclick=\"removeAddress(\'"+addr+"\');\"><span class='glyphicon glyphicon-minus'></span></a>";
+					var div = document.createElement("div");
+					div.innerHTML = dat[0]["street"]+" "+dat[0]["city"]+", "+dat[0]["astate"]+" "+dat[0]["zip"]+" <br>Apt #"+dat[0]["apt_number"];
+					
+					var a = document.createElement("div");
+					a.type="button";
+					a.className="btn btn-sm btn-danger pull-right";
+					a.onclick = function(){removeAddress(dat[0])};
+					//a.addEventListener("click",function(){alert();}, false);
+					a.innerHTML="<span class='glyphicon glyphicon-minus'></span>";
+					div.appendChild(a);
+					address.appendChild(div);
+
 
 					for(var i = 1; i < dat.length; i++)
 					{
-						address.innerHTML+="<br>"+dat[i]["street"]+" "+dat[i]["city"]+", "+dat[i]["astate"]+" "+dat[i]["zip"]+" Apt #"+dat[i]["apt_number"];
+						//addr = JSON.stringify(dat[i]);
+						//address.innerHTML+="<br><div>"+dat[i]["street"]+" "+dat[i]["city"]+", "+dat[i]["astate"]+" "+dat[i]["zip"]+" Apt #"+dat[i]["apt_number"];
+						//					+"<a type='button' class='btn btn-sm btn-danger pull-right' onclick=\"removeAddress(\'"+addr+"\');\"><span class='glyphicon glyphicon-minus'></span></a></div>";
+
+						var div = document.createElement("div");
+						div.innerHTML = dat[i]["street"]+" "+dat[i]["city"]+", "+dat[i]["astate"]+" "+dat[i]["zip"]+" <br>Apt #"+dat[i]["apt_number"];
+						
+						var a = document.createElement("div");
+						a.type="button";
+						a.className="btn btn-sm btn-danger pull-right";
+						a.onclick = function(){removeAddress(dat[i])};
+						//a.addEventListener("click",function(){alert();}, false);
+						a.innerHTML="<span class='glyphicon glyphicon-minus'></span>";
+						div.appendChild(a);
+						address.appendChild(document.createElement("br"));
+						address.appendChild(div);
 					}
+
+					//address.innerHTML+="<br><br><a type='button' class='btn btn-sm btn-success pull-right' onclick='addAddress();'><span class='glyphicon glyphicon-plus'></span></a>";
+					address.appendChild(document.createElement("br"));
+					a = document.createElement("div");
+					a.type="button";
+					a.className="btn btn-sm btn-success pull-right";
+					a.onclick = function(){addAddress()};
+					//a.addEventListener("click",function(){alert();}, false);
+					a.innerHTML="<span class='glyphicon glyphicon-plus'></span>";
+					address.appendChild(a);
 				}
 			});
 
@@ -92,15 +133,63 @@ function processResponse(data)
 				url: "../../backend/api/Phone.php?userName=" + data["username"],
 				success: function(dat){
 					dat = JSON.parse(dat);
-					if(dat.length == 0)
-						return;
 					var phone = document.getElementById("phone");
+					if(dat.length == 0)
+					{
+						phone.innerHTML+="<a type='button' class='btn btn-sm btn-success pull-right' onclick='addPhone();'><span class='glyphicon glyphicon-plus'></span></a>";
+						return;
+					}
+					/*
 					phone.innerHTML = formatPhone(dat[0]["number"]);
 
 					for(var i = 1; i < dat.length; i++)
 					{
 						phone.innerHTML+="<br>"+formatPhone(dat[i]["number"]);
 					}
+
+					phone.innerHTML+="<a type='button' class='btn btn-sm btn-success pull-right' onclick='addPhone();'><span class='glyphicon glyphicon-plus'></span></a>";*/
+					var div = document.createElement("div");
+					div.innerHTML = formatPhone(dat[0]["number"]);
+					
+					var a = document.createElement("div");
+					a.type="button";
+					a.className="btn btn-sm btn-danger pull-right";
+					a.onclick = function(){removePhone(dat[0]["number"])};
+					//a.addEventListener("click",function(){alert();}, false);
+					a.innerHTML="<span class='glyphicon glyphicon-minus'></span>";
+					div.appendChild(a);
+					phone.appendChild(div);
+
+
+					for(var i = 1; i < dat.length; i++)
+					{
+						//addr = JSON.stringify(dat[i]);
+						//address.innerHTML+="<br><div>"+dat[i]["street"]+" "+dat[i]["city"]+", "+dat[i]["astate"]+" "+dat[i]["zip"]+" Apt #"+dat[i]["apt_number"];
+						//					+"<a type='button' class='btn btn-sm btn-danger pull-right' onclick=\"removeAddress(\'"+addr+"\');\"><span class='glyphicon glyphicon-minus'></span></a></div>";
+
+						var div = document.createElement("div");
+						div.innerHTML = formatPhone(dat[i]["number"]);
+						
+						var a = document.createElement("div");
+						a.type="button";
+						a.className="btn btn-sm btn-danger pull-right";
+						a.onclick = function(){removePhone(dat[i])};
+						//a.addEventListener("click",function(){alert();}, false);
+						a.innerHTML="<span class='glyphicon glyphicon-minus'></span>";
+						div.appendChild(a);
+						phone.appendChild(document.createElement("br"));
+						phone.appendChild(div);
+					}
+
+					//address.innerHTML+="<br><br><a type='button' class='btn btn-sm btn-success pull-right' onclick='addAddress();'><span class='glyphicon glyphicon-plus'></span></a>";
+					phone.appendChild(document.createElement("br"));
+					a = document.createElement("div");
+					a.type="button";
+					a.className="btn btn-sm btn-success pull-right";
+					a.onclick = function(){addPhone()};
+					//a.addEventListener("click",function(){alert();}, false);
+					a.innerHTML="<span class='glyphicon glyphicon-plus'></span>";
+					phone.appendChild(a);
 				}
 			});
 		}
@@ -143,7 +232,105 @@ function processResponse(data)
 	}
 }
 
+function addAddress()
+{
+	var street = prompt("Enter the street:","street");
+	var city = prompt("Enter the city:","city");
+	var state = prompt("Enter the state:","state");
+	var zip = prompt("Enter the zip:",12345);
+	var apt = prompt("Enter the appartment number:",1);
+
+	var address = {
+		street: street,
+		city: city,
+		astate: state,
+		zip: zip,
+		apt_number: apt
+	};
+
+	$.ajax({
+		url: "../../backend/api/AddAddress.php?address=" + JSON.stringify(address,"",""),
+		success: function(dat){
+			dat = JSON.parse(dat);
+			if(dat["success"])
+			{
+				location.reload();
+			}
+			else
+			{
+				alert(dat["error"]);
+			}
+		}
+	});
+}
+
+function removeAddress(address)
+{
+	$.ajax({
+		url: "../../backend/api/AddAddress.php?remove&address=" + JSON.stringify(address,"",""),
+		success: function(dat){
+			dat = JSON.parse(dat);
+			if(dat["success"])
+			{
+				location.reload();
+			}
+			else
+			{
+				alert(dat["error"]);
+			}
+		}
+	});
+}
+
+function addPhone()
+{
+	var number = prompt("Enter your phone number:\nX+(XXX)XXX-XXXX","1+(123)123-1234");
+	number = number.replace('+',"");
+	number = number.replace('(',"");
+	number = number.replace(')',"");
+	number = number.replace('-',"");
+	if(isNaN(number))
+	{
+		alert("Incorrect format");
+	}
+	else
+	{
+		$.ajax({
+			url: "../../backend/api/AddPhone.php?number=" + number,
+			success: function(dat){
+				dat = JSON.parse(dat);
+				if(dat["success"])
+				{
+					location.reload();
+				}
+				else
+				{
+					alert(dat["error"]);
+				}
+			}
+		});
+	}
+}
+
+function removePhone(number)
+{
+	$.ajax({
+		url: "../../backend/api/AddPhone.php?remove&number=" + number,
+		success: function(dat){
+			dat = JSON.parse(dat);
+			if(dat["success"])
+			{
+				location.reload();
+			}
+			else
+			{
+				alert(dat["error"]);
+			}
+		}
+	});
+}
+
 function formatPhone(phone)
 {
-	return phone[0] + " (" + phone.substring(1,4) + ")" + phone.substring(4,7) + "-" + phone.substring(7);
+	return phone[0] + "+(" + phone.substring(1,4) + ")" + phone.substring(4,7) + "-" + phone.substring(7);
 }

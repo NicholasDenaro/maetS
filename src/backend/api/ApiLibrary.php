@@ -183,6 +183,74 @@ function addAuctionItem($name, $descr, $loc, $img, $price, $endDate)
 	}
 }
 
+function addAddressToUser($username, $address)
+{
+	//query creation
+	$itemQuery = sprintf("INSERT INTO loc_addresses (`username`, `street`, `city`, `astate`, `zip`, `apt_number`) VALUES ('%s','%s','%s','%s','%s','%s');",$username,$address["street"],$address["city"],$address["astate"],$address["zip"],$address["apt_number"]);
+	//query database
+	$databaseConnection = GetDatabaseConnection();
+	$itemResult = $databaseConnection->query($itemQuery);
+	if($itemResult)
+	{
+		return json_encode(array("success"=>"true"));
+	}
+	else
+	{
+		return json_encode(array("error"=>"failed to add address. ".$databaseConnection->error));
+	}
+}
+
+function removeAddressFromUser($username, $address)
+{
+	//query creation
+	$itemQuery = sprintf("DELETE FROM loc_addresses WHERE username='%s' AND street='%s' AND city='%s' AND astate='%s' AND zip='%s' AND apt_number='%s';",$username,$address["street"],$address["city"],$address["astate"],$address["zip"],$address["apt_number"]);
+	//query database
+	$databaseConnection = GetDatabaseConnection();
+	$itemResult = $databaseConnection->query($itemQuery);
+	if($itemResult)
+	{
+		return json_encode(array("success"=>"true"));
+	}
+	else
+	{
+		return json_encode(array("error"=>"failed to remove address. ".$databaseConnection->error));
+	}
+}
+
+function addPhoneToUser($username, $number)
+{
+	//query creation
+	$itemQuery = sprintf("INSERT INTO cont_phone (`username`, `number`) VALUES ('%s','%s');",$username,$number);
+	//query database
+	$databaseConnection = GetDatabaseConnection();
+	$itemResult = $databaseConnection->query($itemQuery);
+	if($itemResult)
+	{
+		return json_encode(array("success"=>"true"));
+	}
+	else
+	{
+		return json_encode(array("error"=>"failed to add address. ".$databaseConnection->error));
+	}
+}
+
+function removePhoneFromUser($username, $number)
+{
+	//query creation
+	$itemQuery = sprintf("DELETE FROM cont_phone WHERE username='%s' AND number='%s';",$username,$number);
+	//query database
+	$databaseConnection = GetDatabaseConnection();
+	$itemResult = $databaseConnection->query($itemQuery);
+	if($itemResult)
+	{
+		return json_encode(array("success"=>"true"));
+	}
+	else
+	{
+		return json_encode(array("error"=>"failed to remove phone number. ".$databaseConnection->error));
+	}
+}
+
 function addCategoryToItem($iid, $category)
 {
 	if($category == null)
