@@ -1390,6 +1390,26 @@ function transaction($iid, $buyer)
 	}
 }
 
+function getEmailFromUser($user)
+{
+	//query creation
+	//Use "LIKE" because then we can pattern match.
+	$userQuery = "SELECT * FROM user WHERE username = '" . $user . "';";
+
+	//query database
+	$databaseConnection = GetDatabaseConnection();
+	$userResult = $databaseConnection->query($userQuery);
+
+	//Loop through the results and add each row to an array.
+	$output = array();
+	while($row = $userResult->fetch_assoc())
+	{
+		array_push($output, $row);
+	}
+
+	return $output[0]["email"];
+}
+
 function transactionUser($iid, $buyer)
 {
 	//query creation
@@ -1429,7 +1449,13 @@ function transactionUser($iid, $buyer)
 	$seller = $item["username"];
 	if(isset($item["min_price"]))//auction item
 	{
-		$price = $item["min_price"];	
+		$price = $item["min_price"];
+
+		$sellerEmail = getEmailFromUser($seller);
+		$buyerEmail = getEmailFromUser($buyer);
+
+		mail($sellerEmail,"[maetS] Auction ended","contact $buyerEmail");	
+		mail($buyerEmail,"[maetS] Auction won","contact $sellerEmail");
 	}
 	else//sale item
 	{
