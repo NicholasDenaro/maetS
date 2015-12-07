@@ -1,0 +1,11 @@
+select cname, Count(*), AVG(price) FROM
+(
+select cname, price from (user_transaction NATURAL JOIN sale_item NATURAL JOIN categorized NATURAL JOIN category)
+UNION
+select cname, min_price as price from (user_transaction NATURAL JOIN auction_item NATURAL JOIN categorized NATURAL JOIN category)
+UNION
+select cname, price from (supplier_trans NATURAL JOIN sale_item NATURAL JOIN categorized NATURAL JOIN category)
+UNION
+select cname, min_price as price from (supplier_trans NATURAL JOIN auction_item NATURAL JOIN categorized NATURAL JOIN category)
+) as T1
+GROUP BY cname
