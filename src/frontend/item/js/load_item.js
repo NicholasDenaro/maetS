@@ -106,7 +106,7 @@ function buyItem(iid)
 				}
 				else
 				{
-					alert("Item could not be purchased.");
+					alert(data["error"]);
 				}
 			},
 			error: function(xhr, ajaxOptions, thrownError)
