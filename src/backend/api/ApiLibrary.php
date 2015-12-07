@@ -1489,6 +1489,7 @@ function transactionUser($iid, $buyer)
 	}
 
 	$item = $output[0];
+		$itemName = $item["name"];
 
 	$seller = $item["username"];
 	if(isset($item["min_price"]))//auction item
@@ -1498,8 +1499,9 @@ function transactionUser($iid, $buyer)
 		$sellerEmail = getEmailFromUser($seller);
 		$buyerEmail = getEmailFromUser($buyer);
 
-		mail($sellerEmail,"[maetS] Auction ended - $item['name']","contact $buyerEmail");	
-		mail($buyerEmail,"[maetS] Auction won - $item['name']","contact $sellerEmail");
+
+		mail($sellerEmail,"[maetS] Auction ended - $itemName","contact $buyerEmail");	
+		mail($buyerEmail,"[maetS] Auction won - $itemName","contact $sellerEmail");
 	}
 	else//sale item
 	{
@@ -1508,8 +1510,8 @@ function transactionUser($iid, $buyer)
 		$sellerEmail = getEmailFromUser($seller);
 		$buyerEmail = getEmailFromUser($buyer);
 
-		mail($sellerEmail,"[maetS] Item Sold - $item['name']","$item['name'].\nCongratulations.\nPayment has been processed.");	
-		mail($buyerEmail,"[maetS] Item Purchased - $item['name']","Payment has been processed. $item['name'] Your item will be shipping shortly.");
+		mail($sellerEmail,"[maetS] Item Sold - $itemName","Congratulations.\nPayment has been processed.");	
+		mail($buyerEmail,"[maetS] Item Purchased - $itemName","Payment has been processed. Your item will be shipping shortly.");
 	}
 
 	$transQuery = sprintf("INSERT INTO User_Transaction (`cusername`,`busername`, `iid`,`utdate`) VALUES ('%s','%s','%s',now())",$seller,$buyer,$iid);
@@ -1566,6 +1568,7 @@ function transactionSupplier($iid, $buyer)
 	}
 
 	$item = $output[0];
+		$itemName = $item["name"];
 
 	$seller = $item["supplier"];
 	if(isset($item["min_price"]))//auction item
@@ -1574,7 +1577,7 @@ function transactionSupplier($iid, $buyer)
 
 		$buyerEmail = getEmailFromUser($buyer);
 	
-		mail($buyerEmail,"[maetS] Auction won - $item['name']","contact $sellerEmail");
+		mail($buyerEmail,"[maetS] Auction won - $itemName","contact $sellerEmail");
 	}
 	else//sale item
 	{
@@ -1582,7 +1585,7 @@ function transactionSupplier($iid, $buyer)
 
 		$buyerEmail = getEmailFromUser($buyer);
 
-		mail($buyerEmail,"[maetS] Item Purchased - $item['name']","Payment has been processed. $item['name'] Your item will be shipping shortly.");
+		mail($buyerEmail,"[maetS] Item Purchased - $itemName","Payment has been processed. Your item will be shipping shortly.");
 	}
 
 	$transQuery = sprintf("INSERT INTO supplier_Trans (`supplier`,`username`, `iid`,`stdate`) VALUES ('%s','%s','%s',now())",$seller,$buyer,$iid);
