@@ -192,6 +192,63 @@ function processResponse(data)
 					phone.appendChild(a);
 				}
 			});
+
+			$.ajax({
+				url: "../../backend/api/CreditCard.php?userName=" + data["username"],
+				success: function(dat){
+					dat = JSON.parse(dat);
+					var address = document.getElementById("creditcard");
+					if(dat.length == 0)
+					{
+						address.innerHTML+="<a type='button' class='btn btn-sm btn-success pull-right' onclick='addCreditCard();'><span class='glyphicon glyphicon-plus'></span></a>";
+						return;
+					}
+					//address.innerHTML = dat[0]["street"]+" "+dat[0]["city"]+", "+dat[0]["astate"]+" "+dat[0]["zip"]+" Apt #"+dat[0]["apt_number"];
+					//"<a type='button' class='btn btn-sm btn-danger pull-right' onclick=\"removeAddress(\'"+addr+"\');\"><span class='glyphicon glyphicon-minus'></span></a>";
+					var div = document.createElement("div");
+					div.innerHTML = dat[0]["cnumber"]+" "+dat[0]["cname"]+", "+dat[0]["ctype"]+" "+dat[0]["expiration"];
+					
+					var a = document.createElement("div");
+					a.type="button";
+					a.className="btn btn-sm btn-danger pull-right";
+					a.onclick = function(){removeCreditCard(dat[0])};
+					//a.addEventListener("click",function(){alert();}, false);
+					a.innerHTML="<span class='glyphicon glyphicon-minus'></span>";
+					div.appendChild(a);
+					address.appendChild(div);
+
+
+					for(var i = 1; i < dat.length; i++)
+					{
+						//addr = JSON.stringify(dat[i]);
+						//address.innerHTML+="<br><div>"+dat[i]["street"]+" "+dat[i]["city"]+", "+dat[i]["astate"]+" "+dat[i]["zip"]+" Apt #"+dat[i]["apt_number"];
+						//					+"<a type='button' class='btn btn-sm btn-danger pull-right' onclick=\"removeAddress(\'"+addr+"\');\"><span class='glyphicon glyphicon-minus'></span></a></div>";
+
+						var div = document.createElement("div");
+						div.innerHTML = dat[i]["cnumber"]+" "+dat[i]["cname"]+", "+dat[i]["type"]+" "+dat[i]["expiration"];
+						
+						var a = document.createElement("div");
+						a.type="button";
+						a.className="btn btn-sm btn-danger pull-right";
+						a.onclick = function(){removeCreditCard(dat[i])};
+						//a.addEventListener("click",function(){alert();}, false);
+						a.innerHTML="<span class='glyphicon glyphicon-minus'></span>";
+						div.appendChild(a);
+						address.appendChild(document.createElement("br"));
+						address.appendChild(div);
+					}
+
+					//address.innerHTML+="<br><br><a type='button' class='btn btn-sm btn-success pull-right' onclick='addAddress();'><span class='glyphicon glyphicon-plus'></span></a>";
+					address.appendChild(document.createElement("br"));
+					a = document.createElement("div");
+					a.type="button";
+					a.className="btn btn-sm btn-success pull-right";
+					a.onclick = function(){addCreditCard()};
+					//a.addEventListener("click",function(){alert();}, false);
+					a.innerHTML="<span class='glyphicon glyphicon-plus'></span>";
+					address.appendChild(a);
+				}
+			});
 		}
 		else
 		{
@@ -268,6 +325,54 @@ function removeAddress(address)
 {
 	$.ajax({
 		url: "../../backend/api/AddAddress.php?remove&address=" + JSON.stringify(address,"",""),
+		success: function(dat){
+			dat = JSON.parse(dat);
+			if(dat["success"])
+			{
+				location.reload();
+			}
+			else
+			{
+				alert(dat["error"]);
+			}
+		}
+	});
+}
+
+function addCreditCard()
+{
+	var street = prompt("Enter the number:","123456789");
+	var city = prompt("Enter the name on the card:","John Smith");
+	var state = prompt("Enter the card type:","VISA");
+	var zip = prompt("Enter the expiration:","2020-12-27");
+
+	var card = {
+		cnumber: street,
+		cname: city,
+		ctype: state,
+		expiration: zip
+	};
+
+	$.ajax({
+		url: "../../backend/api/AddCreditCard.php?card=" + JSON.stringify(card,"",""),
+		success: function(dat){
+			dat = JSON.parse(dat);
+			if(dat["success"])
+			{
+				document.location.reload();
+			}
+			else
+			{
+				alert(dat["error"]);
+			}
+		}
+	});
+}
+
+function removeCreditCard(card)
+{
+	$.ajax({
+		url: "../../backend/api/AddCreditCard.php?remove&card=" + JSON.stringify(card,"",""),
 		success: function(dat){
 			dat = JSON.parse(dat);
 			if(dat["success"])

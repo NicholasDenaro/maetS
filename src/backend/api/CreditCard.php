@@ -1,20 +1,19 @@
 <?php
 
 require_once("ApiLibrary.php");
+session_start();
 
 //Checks if this is running from a request
 if(isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === 'GET')
 {
-	//This checks to see if anything was passed into the parameter userName
-	if (!isset($_GET['userName']))
+	if(!isset($_SESSION['username']) || $_SESSION['username']==null)
 	{
-		//handle error
+		echo json_encode(array("error"=>"must be logged in to add an Address."));
+		return;
 	}
-	else
-	{
-		$_userName=($_GET['userName']);
-		echo getCreditCardByUser($_userName);
-	}
+
+	$_username = $_SESSION['username'];
+	echo getCreditCardByUser($_username);
 }
 
 

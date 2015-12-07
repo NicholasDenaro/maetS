@@ -217,6 +217,40 @@ function removeAddressFromUser($username, $address)
 	}
 }
 
+function addCreditCardToUser($username, $card)
+{
+	//query creation
+	$itemQuery = sprintf("INSERT INTO cash_credit_card (`username`, `cnumber`, `cname`, `ctype`, `expiration`) VALUES ('%s','%s','%s','%s','%s');",$username,$card["cnumber"],$card["cname"],$card["ctype"],$card["expiration"]);
+	//query database
+	$databaseConnection = GetDatabaseConnection();
+	$itemResult = $databaseConnection->query($itemQuery);
+	if($itemResult)
+	{
+		return json_encode(array("success"=>"true"));
+	}
+	else
+	{
+		return json_encode(array("error"=>"failed to add credit card. ".$databaseConnection->error));
+	}
+}
+
+function removeCreditCardFromUser($username, $card)
+{
+	//query creation
+	$itemQuery = sprintf("DELETE FROM cash_credit_card WHERE username='%s' AND cnumber='%s' AND cname='%s' AND ctype='%s' AND expiration='%s';",$username,$card["cnumber"],$card["cname"],$card["ctype"],$card["expiration"]);
+	//query database
+	$databaseConnection = GetDatabaseConnection();
+	$itemResult = $databaseConnection->query($itemQuery);
+	if($itemResult)
+	{
+		return json_encode(array("success"=>"true"));
+	}
+	else
+	{
+		return json_encode(array("error"=>"failed to remove credit card. ".$databaseConnection->error));
+	}
+}
+
 function addPhoneToUser($username, $number)
 {
 	//query creation
