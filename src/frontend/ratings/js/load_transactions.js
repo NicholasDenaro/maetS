@@ -13,7 +13,7 @@ function initTransactions()
 		}
 		else
 		{
-			URL+="usernamme="+username;
+			URL+="username="+username;
 		}
 		$.ajax({
 			url: URL,
