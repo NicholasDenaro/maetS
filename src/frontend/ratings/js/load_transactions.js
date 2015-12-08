@@ -1,7 +1,7 @@
 function initTransactions()
 {
 
-	//checkIfLoggedIn(function(check)
+	checkIfLoggedIn();//function(check)
 	{
 
 		var username = getUsernameFromURL("username");

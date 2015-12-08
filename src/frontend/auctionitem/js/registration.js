@@ -1,6 +1,11 @@
 function init()
 {
-	checkIfLoggedIn();
+	checkIfLoggedIn(function(loggedIn){
+		if(!loggedIn)
+		{
+			document.location.href="../homepage";
+		}
+	});
 
 	var URL = "../../backend/api/Category.php?catId=%";
 	$.ajax({
