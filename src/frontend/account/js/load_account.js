@@ -109,7 +109,11 @@ function processResponse(data)
 						var a = document.createElement("div");
 						a.type="button";
 						a.className="btn btn-sm btn-danger pull-right";
-						a.onclick = function(){removeAddress(dat[i])};
+						//a.onclick = function(){removeAddress(dat[i])};
+						a.onclick = function(e,c){
+							removeAddress(e);
+						};
+						a.onclick = a.onclick.bind(null,dat[i]);
 						//a.addEventListener("click",function(){alert();}, false);
 						a.innerHTML="<span class='glyphicon glyphicon-minus'></span>";
 						div.appendChild(a);
@@ -160,9 +164,11 @@ function processResponse(data)
 					div.appendChild(a);
 					phone.appendChild(div);
 
+					;
 
 					for(var i = 1; i < dat.length; i++)
 					{
+
 						//addr = JSON.stringify(dat[i]);
 						//address.innerHTML+="<br><div>"+dat[i]["street"]+" "+dat[i]["city"]+", "+dat[i]["astate"]+" "+dat[i]["zip"]+" Apt #"+dat[i]["apt_number"];
 						//					+"<a type='button' class='btn btn-sm btn-danger pull-right' onclick=\"removeAddress(\'"+addr+"\');\"><span class='glyphicon glyphicon-minus'></span></a></div>";
@@ -173,7 +179,12 @@ function processResponse(data)
 						var a = document.createElement("div");
 						a.type="button";
 						a.className="btn btn-sm btn-danger pull-right";
-						a.onclick = function(){removePhone(dat[i])};
+
+						a.onclick = function(e,c){
+							removePhone(e);
+						};
+						a.onclick = a.onclick.bind(null,dat[i]["number"]);
+
 						//a.addEventListener("click",function(){alert();}, false);
 						a.innerHTML="<span class='glyphicon glyphicon-minus'></span>";
 						div.appendChild(a);
@@ -198,7 +209,7 @@ function processResponse(data)
 				success: function(dat){
 					dat = JSON.parse(dat);
 					var address = document.getElementById("creditcard");
-					if(dat.length == 0)
+					if(dat["error"] != undefined)
 					{
 						address.innerHTML+="<a type='button' class='btn btn-sm btn-success pull-right' onclick='addCreditCard();'><span class='glyphicon glyphicon-plus'></span></a>";
 						return;
@@ -225,12 +236,16 @@ function processResponse(data)
 						//					+"<a type='button' class='btn btn-sm btn-danger pull-right' onclick=\"removeAddress(\'"+addr+"\');\"><span class='glyphicon glyphicon-minus'></span></a></div>";
 
 						var div = document.createElement("div");
-						div.innerHTML = dat[i]["cnumber"]+" "+dat[i]["cname"]+", "+dat[i]["type"]+" "+dat[i]["expiration"];
+						div.innerHTML = dat[i]["cnumber"]+" "+dat[i]["cname"]+", "+dat[i]["ctype"]+" "+dat[i]["expiration"];
 						
 						var a = document.createElement("div");
 						a.type="button";
 						a.className="btn btn-sm btn-danger pull-right";
-						a.onclick = function(){removeCreditCard(dat[i])};
+						//a.onclick = function(){removeCreditCard(dat[i]);};
+						a.onclick = function(e,c){
+							removeCreditCard(e);
+						};
+						a.onclick = a.onclick.bind(null,dat[i]);
 						//a.addEventListener("click",function(){alert();}, false);
 						a.innerHTML="<span class='glyphicon glyphicon-minus'></span>";
 						div.appendChild(a);
