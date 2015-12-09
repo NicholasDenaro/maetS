@@ -96,10 +96,9 @@ function refreshAuctions()
 	{
 		while($row = $itemResult->fetch_assoc())
 		{
-			$end = date_create($row['end_date']);
-			$end = $end->getTimestamp();
-			$now = new DateTime();
-			$now = $now->getTimestamp();
+			date_default_timezone_set("America/New_York"); 
+			$end = strtotime($row['end_date']);
+			$now = time();
 			if($end <= $now)
 			{
 				if($row["bidder"] != null)
