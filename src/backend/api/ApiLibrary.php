@@ -732,7 +732,7 @@ function getCategoryByItem( $itemId )
 function getChildrenCategories( $catId )
 {
 	//query creation
-	$categoryQuery = "SELECT * FROM Connected_To C1, Category C2 WHERE C1.ccid = C2.cid AND C1.cid = '".$catId."'";
+	$categoryQuery = "SELECT * FROM Connected_To C1, Category C2 WHERE C1.ccid = C2.cid AND C1.cid = '".$catId."' ORDER BY C2.cname";
 
 	//query database
 	$databaseConnection = GetDatabaseConnection();
